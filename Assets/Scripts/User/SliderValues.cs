@@ -8,7 +8,15 @@ public class SliderValues : MonoBehaviour {
    [SerializeField] private GameObject TimeHorde;
    [SerializeField] private GameObject SpeedSpaceships;
 
-   private void Start () {
+   public static SliderValues instance;
+   private void Awake () {
+      if (instance != null && instance != this) {
+         Destroy(gameObject);
+      } else {
+         instance = this;
+      }
+   }
+   public void GetMatchTxt () {
       TextReader Datostxt;
       try {
          Datostxt = new StreamReader(Application.persistentDataPath + "/Match.txt");
@@ -27,15 +35,15 @@ public class SliderValues : MonoBehaviour {
                break;
             }
          }
-      } catch (Exception) {
-         Datostxt = null;
+      } catch {
          SpaceshipsHorde.GetComponentInChildren<Slider>().value = 6;
          TimeHorde.GetComponentInChildren<Slider>().value = 9;
          SpeedSpaceships.GetComponentInChildren<Slider>().value = 4;
+         UpdateSliders();
          SaveMatchTxt();
       }
    }
-   void Update () {
+   public void UpdateSliders () {
       SpaceshipsHorde.GetComponentsInChildren<Text>()[1].text = SpaceshipsHorde.GetComponentInChildren<Slider>().value.ToString();
       TimeHorde.GetComponentsInChildren<Text>()[1].text = (TimeHorde.GetComponentInChildren<Slider>().value * 2.0f).ToString("F0") + " [s]";
       SpeedSpaceships.GetComponentsInChildren<Text>()[1].text = (SpeedSpaceships.GetComponentInChildren<Slider>().value * 0.1f + 0.4f).ToString("F1") + " [m/s]";
@@ -51,5 +59,6 @@ public class SliderValues : MonoBehaviour {
       val = (SpeedSpaceships.GetComponentInChildren<Slider>().value * 0.1f + 0.4f).ToString("F1");
       datos.WriteLine("speedSpaceships" + "\t" + val);
       datos.Close();
+      GlobalManager.events.bt_close2();
    }
 }

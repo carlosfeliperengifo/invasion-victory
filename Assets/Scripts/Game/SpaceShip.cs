@@ -1,17 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SpaceShip : MonoBehaviour {
    [SerializeField] private float speed = 1;
-   private Rigidbody rbEnemy;
-
-   [SerializeField] private GameObject projectile;
-   private float ShotForce = 300;
+   [SerializeField] private Rigidbody rigidBody;
 
    private int lifePoints = 5;
 
+   [SerializeField] private GameObject portal;
+   [SerializeField] private GameObject projectile;
    [SerializeField] private GameObject explosion;
    [SerializeField] private GameObject soundimpact;
 
@@ -21,7 +19,9 @@ public class SpaceShip : MonoBehaviour {
    public float Speed { get { return speed; } set { speed = value; } }
 
    void Start () {
-      rbEnemy = GetComponent<Rigidbody>();
+      Vector3 offsetPos = new Vector3(0, 0.9f, 0);
+      GameObject newPortal = Instantiate(portal, transform.position - offsetPos, transform.rotation);
+      Destroy(newPortal, 1.5f);
       StartCoroutine(ShootProjectile());
       stateEva = 0;
    }
@@ -31,25 +31,25 @@ public class SpaceShip : MonoBehaviour {
       GenerateEvasionVector(player);
       Vector3 vectorObjetive = (player.transform.position - transform.position - evasionVector).normalized;
       var rotacion = Quaternion.LookRotation(vectorObjetive);
-      transform.rotation = Quaternion.RotateTowards(transform.rotation, rotacion, 5);
+      transform.rotation = Quaternion.RotateTowards(transform.rotation, rotacion, 2);
       if (Time.timeScale > 0) {
-         rbEnemy.velocity = vectorObjetive * speed;
+         rigidBody.velocity = transform.forward * speed;
+      } else {
+         rigidBody.velocity = transform.forward * 0;
       }
    }
 
    IEnumerator ShootProjectile () {
       float shootRate = Random.Range(5f, 8f);
       yield return new WaitForSeconds(shootRate);
-      GameObject newProjectile = Instantiate(projectile, transform.position, transform.rotation);
-      newProjectile.GetComponent<Rigidbody>().AddForce(transform.forward * ShotForce);
-      Destroy(newProjectile, 3f);
+      Instantiate(projectile, transform.position, transform.rotation);
 
       StartCoroutine(ShootProjectile());
    }
    private void OnTriggerEnter (Collider other) {
       switch (other.tag) {
       case "PlayerBullet":
-         lifePoints -= 1;
+         lifePoints--;
          if (lifePoints == 0) {
             Text spaceshipsDest = GameObject.Find("Destroyed").GetComponentInChildren<Text>();
             spaceshipsDest.text = (int.Parse(spaceshipsDest.text) + 1).ToString();
@@ -64,12 +64,12 @@ public class SpaceShip : MonoBehaviour {
       case "Player":
          Destroy(gameObject);
          break;
+      default:
+         return;
       }
    }
    private void GenerateEvasionVector (GameObject player) {
-      float evax;
-      float evay;
-      float evaz;
+      float evax, evay, evaz;
       float distance = Vector3.Distance(player.transform.position, transform.position);
       if ((distance >= 8.0 && distance <= 10.0) && stateEva != 3) {
          evax = Random.Range(-3f, 3f);

@@ -11,13 +11,13 @@ GameObject:
   - component: {fileID: 4351941035781178}
   - component: {fileID: 33216508653316524}
   - component: {fileID: 23844358526652866}
-  - component: {fileID: 5152433936407645848}
   - component: {fileID: 6557328598439542342}
   - component: {fileID: -202315411635342302}
   - component: {fileID: -4803772379051126814}
+  - component: {fileID: 5152433936407645848}
   m_Layer: 0
   m_Name: AlienFighterGreen
-  m_TagString: EnemyPlane
+  m_TagString: SpaceShip
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 1089099125859580}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.46, y: 0.46, z: 0.46}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -85,22 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5152433936407645848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1089099125859580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd248d6fa871a8a43afde61040fb6af4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 1
-  projectile: {fileID: 1314043251266546, guid: a30ef2e5b0c4a2f4f894c4ff7f998e13, type: 3}
-  explosion: {fileID: 1000011797152326, guid: acf39d9f4addf294d93fa56fa373961b, type: 3}
-  soundimpact: {fileID: 2372246347275025379, guid: 1329de83bc9e44c41a6f5f2264c81420, type: 3}
 --- !u!54 &6557328598439542342
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -227,3 +211,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5152433936407645848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089099125859580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd248d6fa871a8a43afde61040fb6af4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0.5
+  rigidBody: {fileID: 6557328598439542342}
+  portal: {fileID: 100012, guid: 856ddc11c4d1bd54885aa67f69f72cdf, type: 3}
+  projectile: {fileID: 1314043251266546, guid: a30ef2e5b0c4a2f4f894c4ff7f998e13, type: 3}
+  explosion: {fileID: 1000011797152326, guid: acf39d9f4addf294d93fa56fa373961b, type: 3}
+  soundimpact: {fileID: 2372246347275025379, guid: 1329de83bc9e44c41a6f5f2264c81420, type: 3}

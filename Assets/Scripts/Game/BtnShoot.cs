@@ -1,14 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class BtnShoot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler {
-   [SerializeField] private float holdTime = 1f;
-   [SerializeField] private GameObject weapon;
+   [SerializeField] private float holdTime = 0.4f;
+   [SerializeField] private Player player;
 
-   public UnityEvent onLongPress = new UnityEvent();
 
    private bool isLongPress = false;
 
@@ -18,10 +14,10 @@ public class BtnShoot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
    public void OnPointerUp (PointerEventData eventData) {
       CancelInvoke("OnLongPress");
       if (isLongPress) {
-         weapon.GetComponent<Weapon>().IsAutoShot = false;
-         weapon.GetComponent<Weapon>().outFire();
+         isLongPress = false;
+         player.PlayerTransitions(Player.Transition.wait);
       } else {
-         weapon.GetComponent<Weapon>().ShootBurst();
+         player.PlayerTransitions(Player.Transition.shootBurst);
       }
    }
    public void OnPointerExit (PointerEventData eventData) {
@@ -30,7 +26,6 @@ public class BtnShoot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
    }
    private void OnLongPress () {
       isLongPress = true;
-      onLongPress.Invoke();
-      weapon.GetComponent<Weapon>().IsAutoShot = true;
+      player.PlayerTransitions(Player.Transition.autoShot);
    }
 }
