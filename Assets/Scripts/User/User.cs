@@ -9,18 +9,17 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using DG.Tweening;
 
-
 public class User : MonoBehaviour {
-   [SerializeField] private GameObject RankingCanvas;
-   [SerializeField] private GameObject ParamCanvas;
-   [SerializeField] private GameObject CreditsCanvas;
-   [SerializeField] private GameObject ManualCanvas;
+   [SerializeField] private Transform RankingCanvas;
+   [SerializeField] private Transform ParamCanvas;
+   [SerializeField] private Transform CreditsCanvas;
+   [SerializeField] private Transform ManualCanvas;
    [SerializeField] private GameObject MoveCanvas;
 
    private bool inMovement = false;
 
    [SerializeField] private Sprite[] Medals;
-   [SerializeField] private GameObject Container;
+   [SerializeField] private Transform Container;
    [SerializeField] private TopRow PanelTopRow;
    private struct TopUser {
       public string nick;
@@ -42,66 +41,77 @@ public class User : MonoBehaviour {
    }
    private void Update () {
       var frames = MoveCanvas.GetComponentInChildren<VideoPlayer>().frame;
-
       if (inMovement && frames > 0 && !MoveCanvas.GetComponentInChildren<VideoPlayer>().isPlaying) {
          inMovement = false;
          GlobalManager.events.bt_skip2();
       }
    }
    public void Ranking () {
-      SliderValues.instance.GetMatchTxt();
-      GameObject.Find("txMss").GetComponent<Text>().text = "";
+      Message("");
+      ShowNick();
+      StartCoroutine(GetTopListDB());
 
-      TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/User.txt");
-      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-      foreach (string dato in datos) {
-         string[] col = dato.Split(new char[] { '\t' });
-         switch (col[0]) {
-         case "nick":
-            nick = col[1];
-            GameObject.Find("txtNick").GetComponent<Text>().text = col[1];
-            break;
-         }
-      }
-      StartCoroutine(Top10DB());
-
-      RankingCanvas.transform.GetChild(0).transform.DOScale(new Vector3(1, 1, 1), 0.3f);
-      RankingCanvas.transform.GetChild(1).transform.DOScale(new Vector3(1, 1, 1), 0.3f);
-      ParamCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      CreditsCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      ManualCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
+      HideAllCanvas();
+      ShowCanvas(RankingCanvas);
    }
    public void Parameters () {
-      RankingCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      RankingCanvas.transform.GetChild(1).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      ParamCanvas.transform.GetChild(0).transform.DOScale(new Vector3(1, 1, 1), 0.3f);
+      SliderValues.instance.LoadConfigurationTxt();
+      SliderValues.instance.LoadMatchTxt();
+      HideAllCanvas();
+      ShowCanvas(ParamCanvas);
    }
    public void SaveMatchTxt () {
       SliderValues.instance.SaveMatchTxt();
+      GlobalManager.events.bt_close2();
    }
    public void Credits () {
-      RankingCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      RankingCanvas.transform.GetChild(1).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      CreditsCanvas.transform.GetChild(0).transform.DOScale(new Vector3(1, 1, 1), 0.3f);
-
+      HideAllCanvas();
       TextAsset credits = Resources.Load<TextAsset>("Credits");
       CreditsCanvas.transform.GetChild(0).GetChild(1).GetComponentInChildren<Text>().text = credits.text;
+      ShowCanvas(CreditsCanvas);
    }
    public void Manual () {
-      RankingCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      RankingCanvas.transform.GetChild(1).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      ManualCanvas.transform.GetChild(0).transform.DOScale(new Vector3(1, 1, 1), 0.3f);
+      HideAllCanvas();
+      ShowCanvas(ManualCanvas);
    }
    public void Movement () {
-      GameObject.Find("txMss").GetComponent<Text>().text = "Loading . . .";
+      Message("Loading . . .");
       MoveCanvas.SetActive(true);
       MoveCanvas.GetComponentInChildren<VideoPlayer>().Play();
-      RankingCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      RankingCanvas.transform.GetChild(1).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
+      HideAllCanvas();
       inMovement = true;
    }
 
-   IEnumerator Top10DB () {
+   private void HideAllCanvas () {
+      RankingCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+      RankingCanvas.GetChild(1).localScale = new Vector3(0, 0, 0);
+      ParamCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+      CreditsCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+      ManualCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+   }
+   private void ShowCanvas (Transform canvas) {
+      float duration = 0.3f;
+      int n = canvas.childCount;
+      for (int i = 0; i < n; i++) {
+         canvas.GetChild(i).DOScale(new Vector3(1, 1, 1), duration);
+      }
+   }
+   private void ShowNick () {
+      TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/User.txt");
+      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+      Datostxt.Close();
+      foreach (string dato in datos) {
+         string[] col = dato.Split(new char[] { '\t' });
+         if (col[0] == "nick") {
+            nick = col[1];
+            GameObject.Find("txtNick").GetComponent<Text>().text = col[1];
+         }
+      }
+   }
+   private void Message (string mss) {
+      GameObject.Find("txMss").GetComponent<Text>().text = mss;
+   }
+   private IEnumerator GetTopListDB () {
       WWWForm form = new WWWForm();
       form.AddField("nick", nick);
       //string url = "http://universalattack.000webhostapp.com/codes/topUser.php";
@@ -110,7 +120,7 @@ public class User : MonoBehaviour {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            GameObject.Find("txMss").GetComponent<Text>().text = "Connection error, try again";
+            Message("Connection error, try again");
          } else {
             string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
             if (datos.Length > 0) {
@@ -128,27 +138,28 @@ public class User : MonoBehaviour {
                topFile.Close();
                LoadTop10();
             } else {
-               GameObject.Find("txMss").GetComponent<Text>().text = "Connection error, try again";
+               Message("Connection error, try again");
             }
          }
          wr.Dispose();
       }
    }
    private void LoadTop10 () {
-      GameObject.Find("txMss").GetComponent<Text>().text = "Loading . . .";
+      Message("Loading . . .");
       GameObject[] topAnt = GameObject.FindGameObjectsWithTag("Top10");
       foreach (GameObject obj in topAnt) {
          Destroy(obj);
       }
       TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/TopUser.txt");
       string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+      Datostxt.Close();
       var n = 10;
       if (datos.Length < 10) { n = datos.Length; }
 
       for (int i = 0; i < n; i++) {
          string[] col = datos[i].Split(new char[] { '\t' });
          TopRow row;
-         row = Instantiate(PanelTopRow, Container.transform);
+         row = Instantiate(PanelTopRow, Container);
          if (i > 3) {
             row.Medal = Medals[3];
          } else {
@@ -164,7 +175,7 @@ public class User : MonoBehaviour {
          string[] col = datos[i].Split(new char[] { '\t' });
          if (nick == col[0]) {
             TopRow row;
-            row = Instantiate(PanelTopRow, Container.transform);
+            row = Instantiate(PanelTopRow, Container);
             if (i > 3) {
                row.Medal = Medals[3];
             } else {
@@ -176,6 +187,6 @@ public class User : MonoBehaviour {
             row.Background = new Color(0.9f, 0.7f, 0, 1);
          }
       }
-      GameObject.Find("txMss").GetComponent<Text>().text = "";
+      Message("");
    }
 }

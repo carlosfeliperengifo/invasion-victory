@@ -6,9 +6,9 @@ using DG.Tweening;
 using UnityEngine.Networking;
 
 public class EndGame : MonoBehaviour {
-   [SerializeField] private GameObject ConnectionCanvas;
-   [SerializeField] private GameObject GameOverCanvas;
-   [SerializeField] private GameObject CongratulationsCanvas;
+   [SerializeField] private Transform ConnectionCanvas;
+   [SerializeField] private Transform GameOverCanvas;
+   [SerializeField] private Transform CongratulationsCanvas;
 
    [SerializeField] private AudioSource gameOverSound;
    [SerializeField] private AudioSource congratSound;
@@ -32,18 +32,9 @@ public class EndGame : MonoBehaviour {
          States = this;
       }
    }
-   void Start () {
+   private void LoadSesion () {
       sesionForm = new WWWForm();
-      mathForm = new WWWForm();
-      performanceForm = new WWWForm();
-      GetSesionTxt();
-      GetMatchTxt();
-      GetPerformanceTxt();
-   }
-
-   private void GetSesionTxt () {
-      TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/User.txt");
-      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' });
+      string[] datos = GetDataTxt("User");
       foreach (string dato in datos) {
          string[] col = dato.Split(new char[] { '\t' });
          if (col.Length == 2) {
@@ -51,9 +42,9 @@ public class EndGame : MonoBehaviour {
          }
       }
    }
-   private void GetMatchTxt () {
-      TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/Match.txt");
-      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' });
+   private void LoadMatch () {
+      mathForm = new WWWForm();
+      string[] datos = GetDataTxt("Match");
       string serial = "";
       foreach (string dato in datos) {
          string[] col = dato.Split(new char[] { '\t' });
@@ -69,9 +60,9 @@ public class EndGame : MonoBehaviour {
       serial = serial.Remove(serial.Length - 1);
       mathForm.AddField("serial", serial);
    }
-   private void GetPerformanceTxt () {
-      TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/Performance.txt");
-      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' });
+   private void LoadPerformance () {
+      performanceForm = new WWWForm();
+      string[] datos = GetDataTxt("Performance");
       foreach (string dato in datos) {
          string[] col = dato.Split(new char[] { '\t' });
          if (col.Length == 2) {
@@ -85,20 +76,21 @@ public class EndGame : MonoBehaviour {
          }
       }
    }
+   private string[] GetDataTxt (string name) {
+      TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/" + name + ".txt");
+      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' });
+      Datostxt.Close();
+      return datos;
+   }
    public IEnumerator Connection () {
       if (Application.internetReachability == NetworkReachability.NotReachable) {
-         GameOverCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-         CongratulationsCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-         ConnectionCanvas.transform.GetChild(0).transform.DOScale(new Vector3(1, 1, 1), 0.3f);
+         ShowCanvas(ConnectionCanvas);
          GameObject.Find("BtRetry").transform.localScale = new Vector3(0, 0, 0);
-
          background.color = new Color(0.431f, 0.471f, 0.51f, 1f);
-
          isConnected = false;
       } else {
-         GlobalManager.events.conn_ok();
-
          isConnected = true;
+         GlobalManager.events.conn_ok();
       }
       yield return new WaitForSeconds(10);
       if (!isConnected) {
@@ -106,7 +98,8 @@ public class EndGame : MonoBehaviour {
       }
    }
    public IEnumerator InsertSessionDB () {
-      //string url = "http://universalattack.000webhostapp.com/codes/sesion.php";
+      LoadPerformance();
+      LoadSesion();
       string url = "https://semilleroarvrunicauca.com/invasion-victory/sesion.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, sesionForm)) {
          yield return wr.SendWebRequest();
@@ -126,7 +119,7 @@ public class EndGame : MonoBehaviour {
       }
    }
    public IEnumerator InsertMatchDB () {
-      //string url = "http://universalattack.000webhostapp.com/codes/match.php";
+      LoadMatch();
       string url = "https://semilleroarvrunicauca.com/invasion-victory/match.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, mathForm)) {
          yield return wr.SendWebRequest();
@@ -146,7 +139,6 @@ public class EndGame : MonoBehaviour {
       }
    }
    public IEnumerator InsertPerformanceDB () {
-      //string url = "http://universalattack.000webhostapp.com/codes/performance.php";
       string url = "https://semilleroarvrunicauca.com/invasion-victory/performance.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, performanceForm)) {
          yield return wr.SendWebRequest();
@@ -168,10 +160,9 @@ public class EndGame : MonoBehaviour {
       }
    }
    public void GetDataGame () {
-      TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/Performance.txt");
-      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' });
-      for (int i = 0; i < datos.Length; i++) {
-         string[] col = datos[i].Split(new char[] { '\t' });
+      string[] datos = GetDataTxt("Peformance");
+      foreach (string dato in datos) {
+         string[] col = dato.Split(new char[] { '\t' });
          switch (col[0]) {
          case "completedGame":
             completedGame = bool.Parse(col[1]);
@@ -191,23 +182,30 @@ public class EndGame : MonoBehaviour {
       GlobalManager.events.completedGame(completedGame);
    }
    public void GameOver () {
-      ConnectionCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      CongratulationsCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      GameOverCanvas.transform.GetChild(0).transform.DOScale(new Vector3(1, 1, 1), 0.3f);
-
+      HideAllCanvas();
+      ShowCanvas(GameOverCanvas);
       background.color = new Color(0.627f, 0.117f, 0.039f, 1);
-      GameOverCanvas.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = score.ToString();
-      GameOverCanvas.transform.GetChild(0).GetChild(4).GetComponent<Text>().text = timeGame;
+      GameOverCanvas.GetChild(0).GetChild(2).GetComponent<Text>().text = score.ToString();
+      GameOverCanvas.GetChild(0).GetChild(4).GetComponent<Text>().text = timeGame;
       gameOverSound.Play();
    }
    public void Congratulations () {
-      ConnectionCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      GameOverCanvas.transform.GetChild(0).transform.DOScale(new Vector3(0, 0, 0), 0.3f);
-      CongratulationsCanvas.transform.GetChild(0).transform.DOScale(new Vector3(1, 1, 1), 0.3f);
-
+      HideAllCanvas();
+      ShowCanvas(CongratulationsCanvas);
       background.color = new Color(0.588f, 0.117f, 0.588f, 1);
-      CongratulationsCanvas.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = score.ToString();
-      CongratulationsCanvas.transform.GetChild(0).GetChild(4).GetComponent<Text>().text = timeGame;
+      CongratulationsCanvas.GetChild(0).GetChild(2).GetComponent<Text>().text = score.ToString();
+      CongratulationsCanvas.GetChild(0).GetChild(4).GetComponent<Text>().text = timeGame;
       congratSound.Play();
+   }
+   private void HideAllCanvas () {
+      ConnectionCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+      GameOverCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+      CongratulationsCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+   }
+   private void ShowCanvas (Transform canvas) {
+      float duration = 0.3f;
+      for (int i = 0; i < canvas.childCount; i++) {
+         canvas.GetChild(i).DOScale(new Vector3(1, 1, 1), duration);
+      }
    }
 }

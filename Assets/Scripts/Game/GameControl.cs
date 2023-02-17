@@ -1,6 +1,8 @@
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class GameControl : MonoBehaviour {
    [SerializeField] private Player player;
@@ -8,6 +10,7 @@ public class GameControl : MonoBehaviour {
    [SerializeField] private Radar radar;
    [SerializeField] private Text txHordes;
    [SerializeField] private Text txTime;
+   [SerializeField] private Text txConfig;
 
    /******Match*****/
    private int spaceshipsHorde;
@@ -69,20 +72,41 @@ public class GameControl : MonoBehaviour {
       }
    }
    private void GetMatchTxt () {
+      TextReader config = new StreamReader(Application.persistentDataPath + "/Config.txt");
+      string[] dataC = config.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+      config.Close();
+      foreach (string dato in dataC) {
+         string[] col = dato.Split(new char[] { '\t' });
+         switch (col[0]) {
+         case "difficulty":
+            if (col[1] == "1") {
+               txConfig.text = "Random difficulty\n\r";
+            } else {
+               txConfig.text = "Manual difficulty\n\r";
+            }
+            break;
+         default:
+            break;
+         }
+      }
+
       TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/Match.txt");
       string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' });
-
+      Datostxt.Close();
       for (int i = 0; i < datos.Length; i++) {
          string[] col = datos[i].Split(new char[] { '\t' });
          switch (col[0]) {
          case "spaceshipsHorde":
             spaceshipsHorde = int.Parse(col[1]);
+            txConfig.text += col[1] + " spaceships per horde\n\r";
             break;
          case "timeHorde":
             timeHordes = int.Parse(col[1]);
+            txConfig.text += col[1] + " sec between hordes\n\r";
             break;
          case "speedSpaceships":
             speedSpaceships = float.Parse(col[1]);
+            txConfig.text += col[1] + " m/s speed of spaceships";
             break;
          }
       }

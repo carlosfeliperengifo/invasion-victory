@@ -1349,9 +1349,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05d744d0dec28be44a0a6ec7c1373707, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ConnectionCanvas: {fileID: 1490581812}
-  GameOverCanvas: {fileID: 1726627780}
-  CongratulationsCanvas: {fileID: 1715242853}
+  ConnectionCanvas: {fileID: 1490581813}
+  GameOverCanvas: {fileID: 1726627781}
+  CongratulationsCanvas: {fileID: 1715242857}
   gameOverSound: {fileID: 1278341378}
   congratSound: {fileID: 1278341377}
   background: {fileID: 1896082611}

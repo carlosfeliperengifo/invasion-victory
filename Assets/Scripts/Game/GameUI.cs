@@ -3,9 +3,10 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 public class GameUI : MonoBehaviour {
-   [SerializeField] private GameObject GameCanvas;
+   [SerializeField] private Transform GameCanvas;
    [SerializeField] private GameObject PauseCanvas;
    [SerializeField] private Transform timer;
+   [SerializeField] private GameObject infConfig;
    [SerializeField] private GameControl gameControl;
 
    private int temp = 4;
@@ -35,7 +36,7 @@ public class GameUI : MonoBehaviour {
       if (Time.timeScale == 0) {
          Time.timeScale = 1;
       }
-      GameCanvas.transform.GetChild(1).transform.localScale = new Vector3(0, 0, 0);
+      GameCanvas.GetChild(1).localScale = new Vector3(0, 0, 0);
       PauseCanvas.SetActive(false);
       InvokeRepeating("Countdown", 0f, 1f);
    }
@@ -49,12 +50,14 @@ public class GameUI : MonoBehaviour {
             }
          }
       }
-      GameCanvas.transform.GetChild(1).transform.localScale = new Vector3(1, 1, 1);
+      infConfig.SetActive(false);
+      GameCanvas.GetChild(1).localScale = new Vector3(1, 1, 1);
       PauseCanvas.SetActive(false);
       gameControl.StartGame();
    }
    public void Pause () {
-      GameCanvas.transform.GetChild(1).transform.localScale = new Vector3(0, 0, 0);
+      infConfig.SetActive(true);
+      GameCanvas.GetChild(1).localScale = new Vector3(0, 0, 0);
       PauseCanvas.SetActive(true);
       Invoke("PauseGame", 0.1f);
    }

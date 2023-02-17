@@ -20,7 +20,7 @@ public class LoginUserDB : MonoBehaviour {
    }
 
    public void CleanAllDatas () {
-      GameObject.Find("txtMss1").GetComponent<Text>().text = "";
+      Message("");
       inNick.text = "";
       inPass.text = "";
    }
@@ -30,10 +30,10 @@ public class LoginUserDB : MonoBehaviour {
             StartCoroutine(LoginDB());
             return;
          } else {
-            GameObject.Find("txtMss1").GetComponent<Text>().text = "Enter your Password";
+            Message("Enter your Password");
          }
       } else {
-         GameObject.Find("txtMss1").GetComponent<Text>().text = "Enter your Nick";
+         Message("Enter your Nick");
       }
       GlobalManager.events.failed1();
    }
@@ -42,24 +42,23 @@ public class LoginUserDB : MonoBehaviour {
       WWWForm form = new WWWForm();
       form.AddField("nick", inNick.text);
       form.AddField("password", inPass.text);
-      //string url = "http://universalattack.000webhostapp.com/codes/login.php";
       string url = "https://semilleroarvrunicauca.com/invasion-victory/login.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
-         GameObject.Find("txtMss1").GetComponent<Text>().text = "Loading . . .";
+         Message("Loading . . .");
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            GameObject.Find("txtMss1").GetComponent<Text>().text = "Connection error, try again";
+            Message("Connection error, try again");
             GlobalManager.events.failed1();
          } else { // Servidor ok
             switch (wr.downloadHandler.text) {
             case "2": // Contraseña incorrecta
-               GameObject.Find("txtMss1").GetComponent<Text>().text = "Incorrect Password";
+               Message("Incorrect Password");
                inPass.text = "";
                GlobalManager.events.failed1();
                break;
             case "3": // Nick no encontrado
-               GameObject.Find("txtMss1").GetComponent<Text>().text = "Nick not found";
+               Message("Nick not found");
                inPass.text = "";
                GlobalManager.events.failed1();
                break;
@@ -78,13 +77,16 @@ public class LoginUserDB : MonoBehaviour {
                   CleanAllDatas();
                   GlobalManager.events.success2();
                } else {
-                  GameObject.Find("txtMss1").GetComponent<Text>().text = "Connection error, try again";
+                  Message("Connection error, try again");
                   GlobalManager.events.failed1();
                }
                break;
             }
          }
       }
+   }
+   private void Message (string mss) {
+      GameObject.Find("txtMss1").GetComponent<Text>().text = mss;
    }
    public void TogglePass () {
       if (inPass.contentType == InputField.ContentType.Password) {

@@ -19,28 +19,23 @@ public class RecoverDB : MonoBehaviour {
       }
    }
 
-   public void GetQuestions () {
-      StartCoroutine(Questions());
-      GameObject.Find("txtMss3").GetComponent<Text>().text = "";
-   }
    public void CleanAllDatas () {
-      GameObject.Find("txtMss3").GetComponent<Text>().text = "";
+      Message("");
       inNick.text = "";
       inQuestions.value = 0;
       inAnswer.text = "";
       inPass.text = "";
    }
-   IEnumerator Questions () {
+   public IEnumerator GetQuestions () {
+      Message("");
       WWWForm form = new WWWForm();
       form.AddField("nick", inNick.text);
-
-      //string url = "http://universalattack.000webhostapp.com/codes/questions.php";
       string url = "https://semilleroarvrunicauca.com/invasion-victory/questions.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            GameObject.Find("txtMss3").GetComponent<Text>().text = "Connection error, try again";
+            Message("Connection error, try again");
          } else {
             string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
             if (datos.Length > 0) {
@@ -61,17 +56,17 @@ public class RecoverDB : MonoBehaviour {
                   StartCoroutine(UpdatePassDB());
                   return;
                } else {
-                  GameObject.Find("txtMss3").GetComponent<Text>().text = "Invalid Password";
+                  Message("Invalid Password");
                   inPass.text = "";
                }
             } else {
-               GameObject.Find("txtMss3").GetComponent<Text>().text = "Invalid answer";
+               Message("Invalid answer");
             }
          } else {
-            GameObject.Find("txtMss3").GetComponent<Text>().text = "Select a recovery question";
+            Message("Select a recovery question");
          }
       } else {
-         GameObject.Find("txtMss3").GetComponent<Text>().text = "Invalid Nick";
+         Message("Invalid Nick");
       }
       GlobalManager.events.failed3();
    }
@@ -81,44 +76,45 @@ public class RecoverDB : MonoBehaviour {
       form.AddField("password", inPass.text);
       form.AddField("quid", inQuestions.value);
       form.AddField("answer", inAnswer.text.ToLower());
-
-      //string url = "http://universalattack.000webhostapp.com/codes/questions.php";
       string url = "https://semilleroarvrunicauca.com/invasion-victory/editPass.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
-         GameObject.Find("txtMss3").GetComponent<Text>().text = "Loading . . .";
+         Message("Loading . . .");
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            GameObject.Find("txtMss3").GetComponent<Text>().text = "Connection error";
+            Message("Connection error");
             GlobalManager.events.failed3();
          } else { // Servidor OK
             switch (wr.downloadHandler.text) {
             case "1":
-               GameObject.Find("txtMss3").GetComponent<Text>().text = "";
+               Message("");
                CleanAllDatas();
                GlobalManager.events.success1();
                break;
             case "3":
-               GameObject.Find("txtMss3").GetComponent<Text>().text = "Incorrect answer";
+               Message("Incorrect answer");
                GlobalManager.events.failed3();
                break;
             case "4":
-               GameObject.Find("txtMss3").GetComponent<Text>().text = "Incorrect question";
+               Message("Incorrect question");
                GlobalManager.events.failed3();
                break;
             case "5":
-               GameObject.Find("txtMss3").GetComponent<Text>().text = "Nick not found";
+               Message("Nick not found");
                GlobalManager.events.failed3();
                break;
             default:
                Debug.Log(wr.downloadHandler.text);
-               GameObject.Find("txtMss3").GetComponent<Text>().text = "Connection error";
+               Message("Connection error");
                GlobalManager.events.failed3();
                break;
             }
          }
          wr.Dispose();
       }
+   }
+   private void Message (string mss) {
+      GameObject.Find("txtMss3").GetComponent<Text>().text = mss;
    }
    public void TogglePass () {
       if (inPass.contentType == InputField.ContentType.Password) {

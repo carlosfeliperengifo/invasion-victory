@@ -1,14 +1,10 @@
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class UpdateApp : MonoBehaviour {
 
-   void Start () {
-      StartCoroutine(updateApp());
-   }
-   IEnumerator updateApp () {
+   IEnumerator Start () {
       WWWForm form = new WWWForm();
       //string url = "http://universalattack.000webhostapp.com/codes/update.php";
       string url = "https://semilleroarvrunicauca.com/invasion-victory/update.php";

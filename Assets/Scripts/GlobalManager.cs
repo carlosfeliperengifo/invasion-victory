@@ -26,6 +26,9 @@ public class GlobalManager : MonoBehaviour {
    }
 
    private void Start () {
+      if (Time.timeScale == 0) {
+         Time.timeScale = 1;
+      }
       Debug.Log("Scene: " + SceneManager.GetActiveScene().name);
       switch (SceneManager.GetActiveScene().name) {
       case "00_Main":
@@ -159,7 +162,7 @@ public class GlobalManager : MonoBehaviour {
       //StateMachine();
    }
    public void bt_registerNow () {
-      RegisterUserDB.instance.GetQuestions();
+      StartCoroutine(RegisterUserDB.instance.GetQuestions());
       RegisterUserDB.instance.CleanAllDatas();
       currentState = State.Register;
       StateMachine();
@@ -173,7 +176,7 @@ public class GlobalManager : MonoBehaviour {
       StateMachine();
    }
    public void bt_recover () {
-      RecoverDB.instance.GetQuestions();
+      StartCoroutine(RecoverDB.instance.GetQuestions());
       RecoverDB.instance.CleanAllDatas();
       currentState = State.Recover;
       StateMachine();

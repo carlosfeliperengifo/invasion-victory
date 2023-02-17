@@ -16,7 +16,7 @@ public class SpaceShip : MonoBehaviour {
    private Vector3 evasionVector;
    private int stateEva = 0;
 
-   public float Speed { get { return speed; } set { speed = value; } }
+   public float Speed { set { speed = value; } }
 
    void Start () {
       Vector3 offsetPos = new Vector3(0, 0.9f, 0);
@@ -39,11 +39,10 @@ public class SpaceShip : MonoBehaviour {
       }
    }
 
-   IEnumerator ShootProjectile () {
+   private IEnumerator ShootProjectile () {
       float shootRate = Random.Range(5f, 8f);
       yield return new WaitForSeconds(shootRate);
       Instantiate(projectile, transform.position, transform.rotation);
-
       StartCoroutine(ShootProjectile());
    }
    private void OnTriggerEnter (Collider other) {
@@ -94,7 +93,7 @@ public class SpaceShip : MonoBehaviour {
 
       evasionVector = new Vector3(evax, evay, evaz);
    }
-   IEnumerator Damage (bool st) {
+   private IEnumerator Damage (bool st) {
       if (st) {
          transform.GetComponent<MeshRenderer>().material.color = new Color(1f, 0f, 0f, 1f);
          yield return new WaitForSeconds(0.17f);

@@ -12,8 +12,8 @@ public class Player : MonoBehaviour {
    [SerializeField] private AudioSource shotSound;
    [SerializeField] private Text txMun;
 
-   private int lifePoints = 100;
    private const int maxLifePoints = 100;
+   private int lifePoints = maxLifePoints;
    private const float recoveryTime = 4;
 
    private const float shotDelay = 0.18f;
@@ -34,10 +34,10 @@ public class Player : MonoBehaviour {
 
    private IEnumerator Start () {
       yield return new WaitForSeconds(recoveryTime);
-      lifePoints++;
-      if (lifePoints > maxLifePoints) { lifePoints = maxLifePoints; }
-      lifeBar.fillAmount = lifePoints / (float)(maxLifePoints);
-
+      if (lifePoints < maxLifePoints) {
+         lifePoints++;
+         lifeBar.fillAmount = lifePoints / (float)(maxLifePoints);
+      }
       StartCoroutine(Start());
    }
 
@@ -64,7 +64,9 @@ public class Player : MonoBehaviour {
       if (weapon == State.Available) {
          switch (t) {
          case Transition.recharge:
-            weapon = State.Recharging;
+            if (munition < maxMunition) {
+               weapon = State.Recharging;
+            }
             break;
          case Transition.shootBurst:
             weapon = State.ShootingBurst;
@@ -127,14 +129,12 @@ public class Player : MonoBehaviour {
          Handheld.Vibrate();
          Destroy(other.gameObject);
          lifePoints -= 2;
-         damage.color = new Color(1f, 0f, 0f, 0.5f);
-         Invoke("HideDamage", 0.12f);
+         StartCoroutine(Damage(0.5f, 0.12f, true));
          break;
       case "SpaceShip":
          Handheld.Vibrate();
          lifePoints -= 10;
-         damage.color = new Color(1f, 0f, 0f, 0.6f);
-         Invoke("HideDamage", 0.22f);
+         StartCoroutine(Damage(0.6f, 0.22f, true));
          break;
       default:
          return;
@@ -142,7 +142,11 @@ public class Player : MonoBehaviour {
       if (lifePoints < 0) { lifePoints = 0; }
       lifeBar.fillAmount = lifePoints / (float)(maxLifePoints);
    }
-   private void HideDamage () {
-      damage.color = new Color(1f, 0f, 0f, 0f);
+   private IEnumerator Damage (float alpha, float duration, bool st) {
+      damage.color = new Color(1f, 0f, 0f, alpha);
+      if (st) {
+         yield return new WaitForSeconds(duration);
+         StartCoroutine(Damage(0f, 0f, false));
+      }
    }
 }
