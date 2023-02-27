@@ -98,8 +98,8 @@ public class EndGame : MonoBehaviour {
       }
    }
    public IEnumerator InsertSessionDB () {
-      LoadPerformance();
       LoadSesion();
+      LoadPerformance();
       string url = "https://semilleroarvrunicauca.com/invasion-victory/sesion.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, sesionForm)) {
          yield return wr.SendWebRequest();
@@ -160,7 +160,7 @@ public class EndGame : MonoBehaviour {
       }
    }
    public void GetDataGame () {
-      string[] datos = GetDataTxt("Peformance");
+      string[] datos = GetDataTxt("Performance");
       foreach (string dato in datos) {
          string[] col = dato.Split(new char[] { '\t' });
          switch (col[0]) {

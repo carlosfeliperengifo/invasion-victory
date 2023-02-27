@@ -1,5 +1,5 @@
 
-UNITY ASSET CREDITS
+   UNITY ASSET CREDITS
 
 /Alien Ships Pack/
 Autarca
@@ -36,10 +36,29 @@ olive_girardot@hotmail.com
 https://assetstore.unity.com/publishers/39771
 https://assetstore.unity.com/packages/audio/sound-fx/free-sound-effects-pack-155776
 
-
 /Free Game Music Collection/
 The Indie Devs Nation
 soundcloud.com/t-i-d-n-music
 tidnmusic@gmail.com
 https://assetstore.unity.com/publishers/13684
 https://assetstore.unity.com/packages/audio/music/orchestral/free-game-music-collection-177094
+
+
+   DEVELOPERS
+
+Ricardo Campo
+ricampo@unicauca.edu.co
+Engineering in industrial automatic
+University of Cauca
+
+Andres Villaquiran
+gilvilla1@unicauca.edu.co
+Engineering in industrial automatic
+University of Cauca
+
+
+   DIRECTION
+
+Carlos Felipe Rengifo, Ph.D
+Diego Enrique Guzmán, Ph.D(c)
+
