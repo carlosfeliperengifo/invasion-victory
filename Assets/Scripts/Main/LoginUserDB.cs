@@ -70,7 +70,7 @@ public class LoginUserDB : MonoBehaviour {
                   user.WriteLine("usid" + "\t" + datos[1].ToString());
                   user.WriteLine("nick" + "\t" + inNick.text);
                   user.WriteLine("pass" + "\t" + inPass.text);
-                  user.WriteLine("age" + "\t" + datos[2].ToString());
+                  user.WriteLine("arqu" + "\t" + datos[2].ToString());
                   user.WriteLine("date" + "\t" + datos[3].ToString());
                   user.WriteLine("time" + "\t" + datos[4].ToString());
                   user.Close();

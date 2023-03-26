@@ -7,8 +7,8 @@ using System;
 public class RegisterUserDB : MonoBehaviour {
    [SerializeField] private InputField inNick;
    [SerializeField] private InputField inPass;
-   [SerializeField] private InputField inAge;
-   [SerializeField] private Dropdown inQuestions;
+   [SerializeField] private Dropdown inARQuestion;
+   [SerializeField] private Dropdown inSecQuestions;
    [SerializeField] private InputField inAnswer;
    [SerializeField] private Toggle tgConsent;
 
@@ -25,15 +25,15 @@ public class RegisterUserDB : MonoBehaviour {
       Message("");
       inNick.text = "";
       inPass.text = "";
-      inAge.text = "";
-      inQuestions.value = 0;
+      inARQuestion.value = 0;
+      inSecQuestions.value = 0;
       inAnswer.text = "";
    }
    public void RegisterUser () {
       if (inNick.text.Length >= 3) {
          if (inPass.text.Length >= 6) {
-            if (inAge.text.Length > 0) {
-               if (inQuestions.value > 0) {
+            if (inARQuestion.value > 0) {
+               if (inSecQuestions.value > 0) {
                   if (inAnswer.text.Length > 0) {
                      if (tgConsent.isOn) {
                         StartCoroutine(RegisterDB());
@@ -48,7 +48,7 @@ public class RegisterUserDB : MonoBehaviour {
                   Message("Select a recovery question");
                }
             } else {
-               Message("Required Age");
+               Message("Select Yes or No");
             }
          } else {
             Message("Invalid Password");
@@ -74,7 +74,7 @@ public class RegisterUserDB : MonoBehaviour {
             if (datos.Length > 0) {
                foreach (string dato in datos) {
                   string[] dat = dato.Split(new char[] { '&', '&' }, StringSplitOptions.RemoveEmptyEntries);
-                  inQuestions.options.Add(new Dropdown.OptionData(dat[1]));
+                  inSecQuestions.options.Add(new Dropdown.OptionData(dat[1]));
                }
             }
          }
@@ -85,8 +85,12 @@ public class RegisterUserDB : MonoBehaviour {
       WWWForm form = new WWWForm();
       form.AddField("nick", inNick.text);
       form.AddField("password", inPass.text);
-      form.AddField("age", inAge.text);
-      form.AddField("quid", inQuestions.value);
+      if (inARQuestion.value == 1) {
+         form.AddField("arqu", "YES");
+      } else {
+         form.AddField("arqu", "NO");
+      }
+      form.AddField("quid", inSecQuestions.value);
       form.AddField("answer", inAnswer.text.ToLower());
       string url = "https://semilleroarvrunicauca.com/invasion-victory/register.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {

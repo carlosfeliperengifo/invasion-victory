@@ -26,4 +26,7 @@ public class UpdateApp : MonoBehaviour {
          }
       }
    }
+   public void GoUpdate () {
+      Application.OpenURL("https://play.google.com/store/apps/details?id=com.unicauca.InvasionVictory");
+   }
 }
