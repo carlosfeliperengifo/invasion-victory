@@ -1,5 +1,5 @@
 
-   CREDITOS DEL ASSET DE UNITY
+   CRÉDITOS DEL ASSET DE UNITY
 
 /Alien Ships Pack/
 Autarca
@@ -42,6 +42,36 @@ soundcloud.com/t-i-d-n-music
 tidnmusic@gmail.com
 https://assetstore.unity.com/publishers/13684
 https://assetstore.unity.com/packages/audio/music/orchestral/free-game-music-collection-177094
+
+/Guns Pack: Low Poly Guns Collection/
+Fun Assets
+www.artstation.com/funassests
+funassests@gmail.com
+https://assetstore.unity.com/publishers/53292
+https://assetstore.unity.com/packages/3d/props/guns/guns-pack-low-poly-guns-collection-192553
+
+/MAC Sci-Fi Sniper Rifle/
+MAC
+sketchfab.com/svacomatija
+svacomatija@gmail.com
+https://assetstore.unity.com/publishers/52294
+https://assetstore.unity.com/packages/3d/props/weapons/mac-sci-fi-sniper-rifle-188585
+
+/Weapons of Choice - FREE/
+Komposite Sound
+www.kompositesound.fr
+kompositesound@gmail.com
+https://assetstore.unity.com/publishers/32329
+https://assetstore.unity.com/packages/audio/sound-fx/weapons/weapons-of-choice-free-101807
+
+
+   CRÉDITOS ADICIONALES
+
+Imanges.ai
+Antoine Tardif
+https://images.ai/
+https://twitter.com/i/flow/login?redirect_after_login=%2Ffuturistdotai
+https://www.linkedin.com/in/antoine-tardif?original_referer=https%3A%2F%2Fwww.unite.ai%2F
 
 
    DESARROLLADORES

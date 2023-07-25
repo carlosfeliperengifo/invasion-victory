@@ -2,11 +2,16 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GlobalManager : MonoBehaviour {
+   [SerializeField] private Main mainScript;
+   [SerializeField] private User userScript;
+   [SerializeField] private GameUI gameScript;
+   [SerializeField] private EndGame endGameScript;
+
    private enum State {
       Login, Register, Recover, Consent, History,
       LoginDB, RegisterDB, UpdatePassDB,
       Ranking, Parameters, Credits, Manual, Movement,
-      SaveMatchTxt,
+      SaveParameters,
       Game, Playing, Pause,
       SavePerformanceTxt, Connection,
       InsertSessionDB, InsertMatchDB, InsertPerformanceDB,
@@ -32,15 +37,27 @@ public class GlobalManager : MonoBehaviour {
       Debug.Log("Scene: " + SceneManager.GetActiveScene().name);
       switch (SceneManager.GetActiveScene().name) {
       case "00_Main":
+         userScript = null;
+         gameScript = null;
+         endGameScript = null;
          currentState = State.Login;
          break;
       case "01_User":
+         mainScript = null;
+         gameScript = null;
+         endGameScript = null;
          currentState = State.Ranking;
          break;
       case "02_Game":
+         mainScript = null;
+         userScript = null;
+         endGameScript = null;
          currentState = State.Game;
          break;
       case "03_EndGame":
+         mainScript = null;
+         userScript = null;
+         gameScript = null;
          currentState = State.Connection;
          break;
       }
@@ -55,79 +72,79 @@ public class GlobalManager : MonoBehaviour {
          Application.Quit();
          break;
       case State.Login:
-         Main.States.Login();
+         mainScript.Login();
          break;
       case State.Register:
-         Main.States.Register();
+         mainScript.Register();
          break;
       case State.Recover:
-         Main.States.Recover();
+         mainScript.Recover();
          break;
       case State.Consent:
-         Main.States.Consent();
+         mainScript.Consent();
          break;
       case State.LoginDB:
-         Main.States.LoginDB();
+         mainScript.LoginDB();
          break;
       case State.RegisterDB:
-         Main.States.RegisterDB();
+         mainScript.RegisterDB();
          break;
       case State.UpdatePassDB:
-         Main.States.UpdatePassDB();
+         mainScript.UpdatePassDB();
          break;
       case State.History:
-         Main.States.History();
+         mainScript.History();
          break;
       case State.Ranking:
-         User.States.Ranking();
+         userScript.Ranking();
          break;
       case State.Parameters:
-         User.States.Parameters();
+         userScript.Parameters();
          break;
-      case State.SaveMatchTxt:
-         User.States.SaveMatchTxt();
+      case State.SaveParameters:
+         userScript.SaveParameters();
          break;
       case State.Credits:
-         User.States.Credits();
+         userScript.Credits();
          break;
       case State.Manual:
-         User.States.Manual();
+         userScript.Manual();
          break;
       case State.Movement:
-         User.States.Movement();
+         userScript.Movement();
          break;
       case State.Game:
-         GameUI.States.Game();
+         gameScript.Game();
          break;
       case State.Playing:
-         GameUI.States.Playing();
+         gameScript.Playing();
          break;
       case State.Pause:
-         GameUI.States.Pause();
+         gameScript.Pause();
          break;
       case State.SavePerformanceTxt:
-         GameUI.States.SavePerformanceTxt();
+         gameScript.SavePerformanceTxt();
          break;
       case State.Connection:
-         StartCoroutine(EndGame.States.Connection());
+         StartCoroutine(endGameScript.Connection());
          break;
       case State.InsertSessionDB:
-         StartCoroutine(EndGame.States.InsertSessionDB());
+         StartCoroutine(endGameScript.InsertSessionDB());
          break;
       case State.InsertMatchDB:
-         StartCoroutine(EndGame.States.InsertMatchDB());
+         StartCoroutine(endGameScript.InsertMatchDB());
          break;
       case State.InsertPerformanceDB:
-         StartCoroutine(EndGame.States.InsertPerformanceDB());
+         StartCoroutine(endGameScript.InsertPerformanceDB());
          break;
       case State.GetDataGame:
-         EndGame.States.GetDataGame();
+         endGameScript.GetDataGame();
          break;
       case State.GameOver:
-         EndGame.States.GameOver();
+         endGameScript.GameOver();
          break;
       case State.Congratulations:
-         EndGame.States.Congratulations();
+         endGameScript.Congratulations();
          break;
       }
    }
@@ -138,17 +155,14 @@ public class GlobalManager : MonoBehaviour {
       StateMachine();
    }
    public void bt_login2 () {
-      LoginUserDB.instance.CleanAllDatas();
       currentState = State.Login;
       StateMachine();
    }
    public void bt_cancel1 () {
-      LoginUserDB.instance.CleanAllDatas();
       currentState = State.Login;
       StateMachine();
    }
    public void success1 () {
-      LoginUserDB.instance.CleanAllDatas();
       currentState = State.Login;
       StateMachine();
    }
@@ -162,8 +176,6 @@ public class GlobalManager : MonoBehaviour {
       //StateMachine();
    }
    public void bt_registerNow () {
-      StartCoroutine(RegisterUserDB.instance.GetQuestions());
-      RegisterUserDB.instance.CleanAllDatas();
       currentState = State.Register;
       StateMachine();
    }
@@ -176,8 +188,6 @@ public class GlobalManager : MonoBehaviour {
       StateMachine();
    }
    public void bt_recover () {
-      StartCoroutine(RecoverDB.instance.GetQuestions());
-      RecoverDB.instance.CleanAllDatas();
       currentState = State.Recover;
       StateMachine();
    }
@@ -230,7 +240,7 @@ public class GlobalManager : MonoBehaviour {
       StateMachine();
    }
    public void bt_accept2 () {
-      currentState = State.SaveMatchTxt;
+      currentState = State.SaveParameters;
       StateMachine();
    }
    public void bt_credits () {

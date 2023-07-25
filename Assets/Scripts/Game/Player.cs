@@ -6,11 +6,12 @@ public class Player : MonoBehaviour {
    [SerializeField] private Image lifeBar;
    [SerializeField] private Image damage;
    [SerializeField] private GameObject bullet;
-   [SerializeField] private Transform SpawnPoint;
-   [SerializeField] private Animator animator;
-   [SerializeField] private ParticleSystem fire;
-   [SerializeField] private AudioSource shotSound;
+   [SerializeField] private Transform spawnPoint;
+   [SerializeField] private Transform contWeapon;
+   [SerializeField] private GameObject[] weapons;
    [SerializeField] private Text txMun;
+
+   private Weapon weaponScript;
 
    private const int maxLifePoints = 100;
    private int lifePoints = maxLifePoints;
@@ -41,15 +42,22 @@ public class Player : MonoBehaviour {
       StartCoroutine(Start());
    }
 
+   public void LoadWeapon () {
+      int idWp = PlayerPrefs.GetInt("idWeapon", 0);
+      int idMat = PlayerPrefs.GetInt("idMat", 0);
+      GameObject wp = Instantiate(weapons[idWp], contWeapon);
+      weaponScript = wp.GetComponent<Weapon>();
+      weaponScript.ChangeMaterial(idMat);
+   }
+
    private void PlayerStates () {
       switch (weapon) {
       case State.Available:
-         fire.Stop();
+         weaponScript.Repose();
          break;
       case State.Recharging:
-         fire.Stop();
-         animator.SetTrigger("DoReload");
-         Invoke("OutReload", 4f);
+         weaponScript.Reload();
+         Invoke("OutReload", 3f);
          break;
       case State.ShootingBurst:
          burstShots = 3;
@@ -87,19 +95,17 @@ public class Player : MonoBehaviour {
    public void PlayerTransitionsRecharge () => PlayerTransitions(Transition.recharge);
    private IEnumerator GenerateBullet () {
       if (munition > 0) {
-         fire.Play();
-         animator.SetTrigger("Shoot");
-         shotSound.Play();
-         Instantiate(bullet, SpawnPoint.position, SpawnPoint.rotation);
+         weaponScript.Shoot();
+         Instantiate(bullet, spawnPoint.position, spawnPoint.rotation);
          munition--;
          txMun.text = munition.ToString();
       } else {
-         animator.SetTrigger("DoOpen");
+         weaponScript.Open();
          StopCoroutine(GenerateBullet());
          PlayerTransitions(Transition.wait);
       }
       yield return new WaitForSeconds(shotDelay);
-      shotSound.Stop();
+      weaponScript.Repose();
       switch (weapon) {
       case State.ShootingBurst:
          burstShots--;

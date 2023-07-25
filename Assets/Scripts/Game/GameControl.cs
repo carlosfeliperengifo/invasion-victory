@@ -10,7 +10,7 @@ public class GameControl : MonoBehaviour {
    [SerializeField] private Radar radar;
    [SerializeField] private Text txHordes;
    [SerializeField] private Text txTime;
-   [SerializeField] private Text txConfig;
+   [SerializeField] private Text txPhrase;
 
    /******Match*****/
    private int spaceshipsHorde;
@@ -21,7 +21,6 @@ public class GameControl : MonoBehaviour {
    private bool completedGame;
    private float score;
    private int spaceshipsDest;
-   private float destroyed7Total;
    private int lifeBar;
    private float timePlayed;
 
@@ -38,11 +37,19 @@ public class GameControl : MonoBehaviour {
    private const float updateTime = 1;
    private float delayTime = 0;
 
+   public int SpaceshipsHorde { set { spaceshipsHorde = value; } }
+   public int TimeHorde { set { timeHordes = value; } }
+   public float SpeedSpaceships { set { speedSpaceships = value; } }
+
    public float MaxSpawnDist { get { return maxSpawnDist; } }
 
-   void Start () {
-      GetMatchTxt();
-      InvokeRepeating("GenerateHorde", 3.5f, timeHordes);
+   public void LoadGameParameters () {
+      ShowPhrase();
+      player.LoadWeapon();
+      foreach (GameObject ss in spaceships) {
+         ss.GetComponent<SpaceShip>().Speed = speedSpaceships;
+      }
+      InvokeRepeating(nameof(GenerateHorde), 3.5f, timeHordes);
    }
    void Update () {
       if (enableGame) {
@@ -55,7 +62,7 @@ public class GameControl : MonoBehaviour {
          }
 
          if (player.LifePoints == 0) {
-            CancelInvoke("GenerateHorde");
+            CancelInvoke(nameof(GenerateHorde));
             enableGame = false;
             completedGame = false;
             GlobalManager.events.finishgame();
@@ -71,48 +78,11 @@ public class GameControl : MonoBehaviour {
          }
       }
    }
-   private void GetMatchTxt () {
-      TextReader config = new StreamReader(Application.persistentDataPath + "/Config.txt");
-      string[] dataC = config.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-      config.Close();
-      foreach (string dato in dataC) {
-         string[] col = dato.Split(new char[] { '\t' });
-         switch (col[0]) {
-         case "difficulty":
-            if (col[1] == "1") {
-               txConfig.text = "Dificultad aleatoria\n\r";
-            } else {
-               txConfig.text = "Dificultad manual\n\r";
-            }
-            break;
-         default:
-            break;
-         }
-      }
-
-      TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/Match.txt");
-      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' });
-      Datostxt.Close();
-      for (int i = 0; i < datos.Length; i++) {
-         string[] col = datos[i].Split(new char[] { '\t' });
-         switch (col[0]) {
-         case "spaceshipsHorde":
-            spaceshipsHorde = int.Parse(col[1]);
-            txConfig.text += col[1] + " enemigos por horda\n\r";
-            break;
-         case "timeHorde":
-            timeHordes = int.Parse(col[1]);
-            txConfig.text += col[1] + " segundos entre hordas\n\r";
-            break;
-         case "speedSpaceships":
-            speedSpaceships = float.Parse(col[1]);
-            txConfig.text += col[1] + " m/s velocidad del enemigo";
-            break;
-         }
-      }
-      foreach (GameObject ss in spaceships) {
-         ss.GetComponent<SpaceShip>().Speed = speedSpaceships;
-      }
+   private void ShowPhrase () {
+      TextAsset phrase = Resources.Load<TextAsset>("MotivationalQuotes");
+      string[] datos = phrase.text.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+      int index = Random.Range(0, datos.Length);
+      txPhrase.text = datos[index];
    }
    public void StartGame () {
       GetComponent<AudioSource>().Play();
@@ -127,7 +97,7 @@ public class GameControl : MonoBehaviour {
       hordesGenerated++;
       if (hordesGenerated == hordes) {
          completedHordes = true;
-         CancelInvoke("GenerateHorde");
+         CancelInvoke(nameof(GenerateHorde));
       }
       txHordes.text = hordesGenerated.ToString() + "/" + hordes.ToString();
    }
@@ -136,7 +106,7 @@ public class GameControl : MonoBehaviour {
       float radius = Random.Range(minSpawnDist, maxSpawnDist);
       float genPosX = radius * Mathf.Cos(angle * Mathf.Deg2Rad);
       float genPosY = radius * Mathf.Sin(angle * Mathf.Deg2Rad);
-      float genPosZ = Random.Range(0.0f, 1.0f);
+      float genPosZ = Random.Range(0.0f, 2f);
       Transform player = GameObject.FindGameObjectWithTag("Player").transform;
       Vector3 randomPos = new Vector3(genPosX, genPosZ, genPosY) + player.position;
 
@@ -147,7 +117,6 @@ public class GameControl : MonoBehaviour {
       string dest = GameObject.Find("Destroyed").GetComponentInChildren<Text>().text;
       spaceshipsDest = int.Parse(dest);
       var H = hordes;
-      destroyed7Total = ((float)(spaceshipsDest) / (float)(spaceshipsHorde * H)) * 100;
       lifeBar = player.LifePoints;
 
       var SS = (spaceshipsHorde * H / 50f) * (spaceshipsDest / 50f) * 10000;
@@ -155,14 +124,14 @@ public class GameControl : MonoBehaviour {
       var r = minSpawnDist;
       var T = maxTimeGame;
       var M = timeHordes * (H - 1f) + r / speedSpaceships;
-      var tp = 0f;
+      float tp;
       if (timePlayed <= M) {
          tp = Mathf.Sin(2f * Mathf.PI * timePlayed / (4f * M));
       } else {
          tp = Mathf.Sin(2f * Mathf.PI * (timePlayed - M) / (4f * (T - M)) + Mathf.PI / 2f);
       }
-      var tm = (T - M) / (T - (6f * (H - 1f) + (r / 1.2f)));
-      var TS = tp * tm * 10000;
+      //var tm = (T - M) / (T - (6f * (H - 1f) + (r / 1.2f)));
+      var TS = tp * 10000;
       var cg = 0;
       if (completedGame) { cg = 1; }
 
@@ -180,17 +149,12 @@ public class GameControl : MonoBehaviour {
       val = spaceshipsDest.ToString();
       datos.WriteLine("destroyedSpaceships" + "\t" + val);
 
-      val = destroyed7Total.ToString("F2");
-      datos.WriteLine("destroyed7Total" + "\t" + val);
-
       val = lifeBar.ToString();
       datos.WriteLine("lifeBar" + "\t" + val);
 
       val = timePlayed.ToString("F2");
       datos.WriteLine("timePlayed" + "\t" + val);
       datos.Close();
-
-      GlobalManager.events.performanceSaved();
    }
 
 }

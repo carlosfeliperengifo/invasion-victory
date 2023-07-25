@@ -12,14 +12,9 @@ public class RegisterUserDB : MonoBehaviour {
    [SerializeField] private InputField inAnswer;
    [SerializeField] private Toggle tgConsent;
 
-   public static RegisterUserDB instance;
-   private void Awake () {
-      if (instance != null && instance != this) {
-         Destroy(gameObject);
-      } else {
-         instance = this;
-      }
-   }
+   [SerializeField] private Text message;
+
+   private readonly string dataPath = "https://semilleroarvrunicauca.com/invasion-victory/IVAR_2";
 
    public void CleanAllDatas () {
       Message("");
@@ -28,6 +23,7 @@ public class RegisterUserDB : MonoBehaviour {
       inARQuestion.value = 0;
       inSecQuestions.value = 0;
       inAnswer.text = "";
+      tgConsent.isOn = false;
    }
    public void RegisterUser () {
       if (inNick.text.Length >= 3) {
@@ -60,25 +56,29 @@ public class RegisterUserDB : MonoBehaviour {
       GlobalManager.events.failed2();
    }
    public IEnumerator GetQuestions () {
-      Message("");
-      WWWForm form = new WWWForm();
-      form.AddField("nick", inNick.text);
-      string url = "https://semilleroarvrunicauca.com/invasion-victory/questions.php";
-      using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
-         yield return wr.SendWebRequest();
-         if (wr.result != UnityWebRequest.Result.Success) {
-            Debug.Log(wr.error);
-            Message("Error de conexión, vuelve a intentar");
-         } else {
-            string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
-            if (datos.Length > 0) {
-               foreach (string dato in datos) {
-                  string[] dat = dato.Split(new char[] { '&', '&' }, StringSplitOptions.RemoveEmptyEntries);
-                  inSecQuestions.options.Add(new Dropdown.OptionData(dat[1]));
+      if (inSecQuestions.options.Count <=1 ) {
+         Message("");
+         WWWForm form = new WWWForm();
+         form.AddField("nick", "ivar");
+         string url = dataPath + "/questions.php";
+         using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
+            yield return wr.SendWebRequest();
+            if (wr.result != UnityWebRequest.Result.Success) {
+               Debug.Log(wr.error);
+               Message("Error de conexión, vuelve a intentar");
+            } else {
+               string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
+               if (datos.Length > 0) {
+                  foreach (string dato in datos) {
+                     string[] dat = dato.Split(new char[] { '&', '&' }, StringSplitOptions.RemoveEmptyEntries);
+                     inSecQuestions.options.Add(new Dropdown.OptionData(dat[1]));
+                  }
                }
             }
+            wr.Dispose();
          }
-         wr.Dispose();
+      } else {
+         yield return null;
       }
    }
    private IEnumerator RegisterDB () {
@@ -92,7 +92,7 @@ public class RegisterUserDB : MonoBehaviour {
       }
       form.AddField("quid", inSecQuestions.value);
       form.AddField("answer", inAnswer.text.ToLower());
-      string url = "https://semilleroarvrunicauca.com/invasion-victory/register.php";
+      string url = dataPath + "/register.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
          Message("Cargando . . .");
          yield return wr.SendWebRequest();
@@ -124,8 +124,8 @@ public class RegisterUserDB : MonoBehaviour {
          wr.Dispose();
       }
    }
-   private void Message(string mss) {
-      GameObject.Find("txtMss2").GetComponent<Text>().text = mss;
+   private void Message (string mss) {
+      message.text = mss;
    }
    public void TogglePass () {
       if (inPass.contentType == InputField.ContentType.Password) {

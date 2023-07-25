@@ -4,11 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - PlayerBullet
-  - RadarPoint
   - Top10
   - SpaceShip
+  - RadarPoint
+  - PlayerBullet
   - Projectile
+  - Weapon
   layers:
   - Default
   - TransparentFX

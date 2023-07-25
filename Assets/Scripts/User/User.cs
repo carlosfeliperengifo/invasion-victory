@@ -1,27 +1,35 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using DG.Tweening;
-using UnityEditor;
 
 public class User : MonoBehaviour {
-   [SerializeField] private Transform RankingCanvas;
-   [SerializeField] private Transform ParamCanvas;
-   [SerializeField] private Transform CreditsCanvas;
-   [SerializeField] private Transform ManualCanvas;
+   [SerializeField] private Transform RankingPanel;
+   [SerializeField] private Transform ConfigPanel;
+   [SerializeField] private Transform CreditsPanel;
+   [SerializeField] private Transform ManualPanel;
    [SerializeField] private GameObject MoveCanvas;
-
+   [SerializeField] private Armament armamentScript;
    private bool inMovement = false;
 
    [SerializeField] private Sprite[] Medals;
    [SerializeField] private Transform Container;
    [SerializeField] private TopRow PanelTopRow;
+
+   [SerializeField] private Sprite[] Level;
+   [SerializeField] private Image[] ContainersLevel;
+
+   [SerializeField] private Transform btSurvey;
+
+   [SerializeField] private Sprite[] ManualImages;
+   [SerializeField] private Image ContainerManual;
+   [SerializeField] private Transform[] ManualBts;
+   private int indexManual;
+
    private struct TopUser {
       public string nick;
       public int score;
@@ -30,16 +38,12 @@ public class User : MonoBehaviour {
          this.score = score;
       }
    }
+   private int idUser;
    private string nick;
+   private int idLevel = 0;
+   private string points = "";
+   private readonly string dataPath = "https://semilleroarvrunicauca.com/invasion-victory/IVAR_2";
 
-   public static User States;
-   private void Awake () {
-      if (States != null && States != this) {
-         Destroy(gameObject);
-      } else {
-         States = this;
-      }
-   }
    private void Update () {
       var frames = MoveCanvas.GetComponentInChildren<VideoPlayer>().frame;
       if (inMovement && frames > 0 && !MoveCanvas.GetComponentInChildren<VideoPlayer>().isPlaying) {
@@ -48,32 +52,32 @@ public class User : MonoBehaviour {
       }
    }
    public void Ranking () {
-      Message("");
-      ShowNick();
-      StartCoroutine(GetTopListDB());
-
+      Message("Cargando . . .");
+      LoadUserData();
       HideAllCanvas();
-      ShowCanvas(RankingCanvas);
+      ShowCanvas(RankingPanel);
+      StartCoroutine(GetLevel());
    }
    public void Parameters () {
-      SliderValues.instance.LoadConfigurationTxt();
-      SliderValues.instance.LoadMatchTxt();
+      armamentScript.LoadConfiguration(nick, Level[idLevel - 1], points);
       HideAllCanvas();
-      ShowCanvas(ParamCanvas);
+      ShowCanvas(ConfigPanel);
    }
-   public void SaveMatchTxt () {
-      SliderValues.instance.SaveMatchTxt();
-      GlobalManager.events.bt_close2();
+   public void SaveParameters () {
+      armamentScript.SaveParameters();
+      StartCoroutine(UpdateWeapon());
    }
    public void Credits () {
       HideAllCanvas();
       TextAsset credits = Resources.Load<TextAsset>("CreditsEs");
-      CreditsCanvas.transform.GetChild(0).GetChild(1).GetComponentInChildren<Text>().text = credits.text;
-      ShowCanvas(CreditsCanvas);
+      CreditsPanel.GetChild(1).GetComponentInChildren<Text>().text = credits.text;
+      ShowCanvas(CreditsPanel);
    }
    public void Manual () {
       HideAllCanvas();
-      ShowCanvas(ManualCanvas);
+      ShowCanvas(ManualPanel);
+      indexManual = 0;
+      ChangeManualImage(indexManual);
    }
    public void Movement () {
       Message("Cargando . . .");
@@ -84,39 +88,83 @@ public class User : MonoBehaviour {
    }
 
    private void HideAllCanvas () {
-      RankingCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
-      RankingCanvas.GetChild(1).localScale = new Vector3(0, 0, 0);
-      ParamCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
-      CreditsCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
-      ManualCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+      RankingPanel.localScale = Vector3.zero;
+      ConfigPanel.localScale = Vector3.zero;
+      CreditsPanel.localScale = Vector3.zero;
+      ManualPanel.localScale = Vector3.zero;
    }
-   private void ShowCanvas (Transform canvas) {
+   private void ShowCanvas (Transform panel) {
       float duration = 0.3f;
-      int n = canvas.childCount;
-      for (int i = 0; i < n; i++) {
-         canvas.GetChild(i).DOScale(new Vector3(1, 1, 1), duration);
-      }
+      panel.DOScale(Vector3.one, duration);
    }
-   private void ShowNick () {
+   private void LoadUserData () {
       TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/User.txt");
       string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
       Datostxt.Close();
       foreach (string dato in datos) {
          string[] col = dato.Split(new char[] { '\t' });
-         if (col[0] == "nick") {
+         switch (col[0]) {
+         case "usid":
+            idUser = int.Parse(col[1]);
+            break;
+         case "nick":
             nick = col[1];
             GameObject.Find("txtNick").GetComponent<Text>().text = col[1];
+            break;
          }
+      }
+   }
+   private void ShowLevelImage () {
+      if (idLevel > 1) {
+         ContainersLevel[0].sprite = Level[idLevel - 2];
+      } else {
+         ContainersLevel[0].color = new Color(1, 1, 1, 0);
+      }
+      ContainersLevel[1].sprite = Level[idLevel - 1];
+      if (idLevel < Level.Length) {
+         ContainersLevel[2].sprite = Level[idLevel];
+      } else {
+         ContainersLevel[2].color = new Color(1, 1, 1, 0);
       }
    }
    private void Message (string mss) {
       GameObject.Find("txMss").GetComponent<Text>().text = mss;
    }
+   private IEnumerator GetLevel () {
+      WWWForm form = new WWWForm();
+      form.AddField("usid", idUser);
+      form.AddField("option", "return");
+      string url = dataPath + "/ranking.php";
+      using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
+         yield return wr.SendWebRequest();
+         if (wr.result != UnityWebRequest.Result.Success) {
+            Debug.Log(wr.error);
+            Message("Error de conexión, vuelve a intentar");
+         } else {
+            string[] datos = wr.downloadHandler.text.Split(new char[] { '&', '&' }, StringSplitOptions.RemoveEmptyEntries);
+            wr.Dispose();
+            if (datos.Length == 5) {
+               if (datos[0] == "1") {
+                  idLevel = int.Parse(datos[1]);
+                  points = datos[2];
+                  armamentScript.IdLevel = idLevel;
+                  PlayerPrefs.SetInt("idLevel", idLevel);
+                  PlayerPrefs.SetInt("idWeapon", int.Parse(datos[3]));
+                  PlayerPrefs.SetInt("idMat", int.Parse(datos[4]));
+                  ShowLevelImage();
+                  StartCoroutine(GetTopListDB());
+               }
+            } else {
+               Message("Error de conexión, vuelve a intentar");
+            }
+         }
+         wr.Dispose();
+      }
+   }
    private IEnumerator GetTopListDB () {
       WWWForm form = new WWWForm();
-      form.AddField("nick", nick);
-      //string url = "http://universalattack.000webhostapp.com/codes/topUser.php";
-      string url = "https://semilleroarvrunicauca.com/invasion-victory/topUser.php";
+      form.AddField("raid", idLevel);
+      string url = dataPath + "/topUser.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
@@ -125,21 +173,16 @@ public class User : MonoBehaviour {
          } else {
             string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
             if (datos.Length > 0) {
-               List<TopUser> top = new List<TopUser>();
                TextWriter topFile = new StreamWriter(Application.persistentDataPath + "/TopUser.txt", false);
-
-               for (int i = 0; i < datos.Length; i++) {
-                  string[] dat = datos[i].Split(new char[] { '&', '&' }, StringSplitOptions.RemoveEmptyEntries);
-                  top.Add(new TopUser(dat[0], int.Parse(dat[1])));
-               }
-               IEnumerable<TopUser> topOrder = top.OrderByDescending(ts => ts.score);
-               foreach (TopUser topUser in topOrder) {
-                  topFile.WriteLine(topUser.nick + "\t" + topUser.score.ToString());
+               foreach (string dato in datos) {
+                  string[] dat = dato.Split(new char[] { '&', '&' }, StringSplitOptions.RemoveEmptyEntries);
+                  topFile.WriteLine(dat[0] + "\t" + dat[1]);
                }
                topFile.Close();
                LoadTop10();
             } else {
-               Message("Error de conexión, vuelve a intentar");
+               Message("Juega y posicionate primero en el Ranking");
+               ShowBtSurvey();
             }
          }
          wr.Dispose();
@@ -189,5 +232,77 @@ public class User : MonoBehaviour {
          }
       }
       Message("");
+      ShowBtSurvey();
+   }
+   public IEnumerator UpdateWeapon () {
+      string ids = PlayerPrefs.GetInt("idWeapon", 0).ToString();
+      ids += "&&";
+      ids += PlayerPrefs.GetInt("idMat", 0).ToString();
+
+      WWWForm form = new WWWForm();
+      form.AddField("usid", idUser);
+      form.AddField("weapon", ids);
+      string url = dataPath + "/updateWeapon.php";
+      using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
+         yield return wr.SendWebRequest();
+         if (wr.result != UnityWebRequest.Result.Success) {
+            Debug.Log(wr.error);
+            Message("Error de conexión, vuelve a intentar");
+         } else {
+            if (wr.downloadHandler.text == "1") {
+               GlobalManager.events.bt_close2();
+            } else {
+               Message("Error de conexión, vuelve a intentar");
+            }
+         }
+         wr.Dispose();
+      }
+   }
+   private void ShowBtSurvey () {
+      if (points == "0" && PlayerPrefs.GetInt("isLogin", 0) == 1) {
+         PlayerPrefs.SetInt("isLogin", 0);
+         GlobalManager.events.bt_manual();
+         RankingPanel.localScale = Vector3.zero;
+      } else {
+         string str = PlayerPrefs.GetString("survey", "");
+         if (str == "") {
+            btSurvey.localScale = Vector3.zero;
+         } else {
+            btSurvey.localScale = Vector3.one;
+            if (PlayerPrefs.GetInt("showSurvey", 0) == 1) {
+               PlayerPrefs.SetInt("showSurvey", 0);
+               OpenCloseSurveyPlane(true);
+            } else {
+               OpenCloseSurveyPlane(false);
+            }
+         }
+      }
+   }
+   public void OpenCloseSurveyPlane (bool op) {
+      if (op) {
+         btSurvey.GetChild(0).localScale = Vector3.one;
+      } else {
+         btSurvey.GetChild(0).localScale = Vector3.zero;
+      }
+   }
+   public void GoToSurvey () {
+      string str = PlayerPrefs.GetString("survey", "");
+      Application.OpenURL(str);
+   }
+
+   public void ChangeManualImage (int id) {
+      indexManual += id;
+      if (indexManual >= ManualImages.Length - 1) {
+         indexManual = ManualImages.Length - 1;
+         ManualBts[1].localScale = Vector3.zero;
+      } else if (indexManual <= 0) {
+         indexManual = 0;
+         ManualBts[0].localScale = Vector3.zero;
+         ManualBts[1].localScale = Vector3.one;
+      } else {
+         ManualBts[0].localScale = Vector3.one;
+         ManualBts[1].localScale = Vector3.one;
+      }
+      ContainerManual.sprite = ManualImages[indexManual];
    }
 }

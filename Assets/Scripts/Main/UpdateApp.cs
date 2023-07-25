@@ -1,13 +1,19 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class UpdateApp : MonoBehaviour {
+   private readonly string dataPath = "https://semilleroarvrunicauca.com/invasion-victory/IVAR_2";
 
    IEnumerator Start () {
+      StartCoroutine(CheckVersion());
+      yield return new WaitForSeconds(15);
+   }
+
+   private IEnumerator CheckVersion() {
       WWWForm form = new WWWForm();
-      //string url = "http://universalattack.000webhostapp.com/codes/update.php";
-      string url = "https://semilleroarvrunicauca.com/invasion-victory/update.php";
+      string url = dataPath + "/update.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
@@ -24,6 +30,7 @@ public class UpdateApp : MonoBehaviour {
                }
             }
          }
+         wr.Dispose();
       }
    }
    public void GoUpdate () {

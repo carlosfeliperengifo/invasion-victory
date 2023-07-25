@@ -4,42 +4,45 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.Networking;
+using System;
 
 public class EndGame : MonoBehaviour {
-   [SerializeField] private Transform ConnectionCanvas;
-   [SerializeField] private Transform GameOverCanvas;
-   [SerializeField] private Transform CongratulationsCanvas;
+   [SerializeField] private Transform ConnectionPanel;
+   [SerializeField] private Transform GameOverPanel;
+   [SerializeField] private Transform CongratulationsPanel;
+   [SerializeField] private Transform PerformancePanel;
 
    [SerializeField] private AudioSource gameOverSound;
    [SerializeField] private AudioSource congratSound;
    [SerializeField] private RawImage background;
+
+   [SerializeField] private Sprite[] Level;
+
+   [SerializeField] private Text txScore;
+   [SerializeField] private Text txTime;
+   [SerializeField] private Text txPoints;
+   [SerializeField] private Image imLevel;
+   [SerializeField] private Transform txUnlocked;
 
    private WWWForm sesionForm;
    private WWWForm mathForm;
    private WWWForm performanceForm;
 
    private bool completedGame;
-   private int score;
-   private string timeGame;
+   private int idUser;
 
    private bool isConnected = false;
 
-   public static EndGame States;
-   private void Awake () {
-      if (States != null && States != this) {
-         Destroy(gameObject);
-      } else {
-         States = this;
-      }
-   }
+   private readonly string dataPath = "https://semilleroarvrunicauca.com/invasion-victory/IVAR_2";
    private void LoadSesion () {
       sesionForm = new WWWForm();
       string[] datos = GetDataTxt("User");
       foreach (string dato in datos) {
          string[] col = dato.Split(new char[] { '\t' });
-         if (col.Length == 2) {
-            sesionForm.AddField(col[0], col[1]);
+         if (col[0] == "usid") {
+            idUser = int.Parse(col[1]);
          }
+         sesionForm.AddField(col[0], col[1]);
       }
    }
    private void LoadMatch () {
@@ -78,14 +81,14 @@ public class EndGame : MonoBehaviour {
    }
    private string[] GetDataTxt (string name) {
       TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/" + name + ".txt");
-      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' });
+      string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
       Datostxt.Close();
       return datos;
    }
    public IEnumerator Connection () {
       if (Application.internetReachability == NetworkReachability.NotReachable) {
-         ShowCanvas(ConnectionCanvas);
-         GameObject.Find("BtRetry").transform.localScale = new Vector3(0, 0, 0);
+         HideAllCanvas();
+         ShowCanvas(ConnectionPanel);
          background.color = new Color(0.431f, 0.471f, 0.51f, 1f);
          isConnected = false;
       } else {
@@ -100,19 +103,22 @@ public class EndGame : MonoBehaviour {
    public IEnumerator InsertSessionDB () {
       LoadSesion();
       LoadPerformance();
-      string url = "https://semilleroarvrunicauca.com/invasion-victory/sesion.php";
+      string url = dataPath + "/sesion.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, sesionForm)) {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
+            wr.Dispose();
             GlobalManager.events.failed4();
          } else { // Servidor ok
             Debug.Log("Se: " + wr.downloadHandler.text);
             string[] datos = wr.downloadHandler.text.Split(new char[] { ':' });
             if (datos[0] == "1" && datos.Length == 2) {
                performanceForm.AddField("seid", datos[1].ToString());
+               wr.Dispose();
                GlobalManager.events.success3();
             } else {
+               wr.Dispose();
                GlobalManager.events.failed4();
             }
          }
@@ -120,46 +126,84 @@ public class EndGame : MonoBehaviour {
    }
    public IEnumerator InsertMatchDB () {
       LoadMatch();
-      string url = "https://semilleroarvrunicauca.com/invasion-victory/match.php";
+      string url = dataPath + "/match.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, mathForm)) {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
+            wr.Dispose();
             GlobalManager.events.failed4();
          } else { // Servidor ok
             Debug.Log("Ma: " + wr.downloadHandler.text);
             string[] datos = wr.downloadHandler.text.Split(new char[] { ':' });
             if (datos[0] == "1" && datos.Length == 2) {
                performanceForm.AddField("maid", datos[1].ToString());
+               wr.Dispose();
                GlobalManager.events.success4();
             } else {
+               wr.Dispose();
                GlobalManager.events.failed4();
             }
          }
       }
    }
    public IEnumerator InsertPerformanceDB () {
-      string url = "https://semilleroarvrunicauca.com/invasion-victory/performance.php";
+      string url = dataPath + "/performance.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, performanceForm)) {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
+            wr.Dispose();
             GlobalManager.events.failed4();
          } else { // Servidor ok
             switch (wr.downloadHandler.text) {
             case "2":
                Debug.Log("Performance registrado");
-               GlobalManager.events.success5();
+               StartCoroutine(UpdateLevel());
+               //GlobalManager.events.success5();
                break;
             default:
                Debug.Log(wr.downloadHandler.text);
+               wr.Dispose();
                GlobalManager.events.failed4();
                break;
             }
          }
       }
    }
+   private IEnumerator UpdateLevel () {
+      WWWForm form = new WWWForm();
+      form.AddField("usid", idUser);
+      form.AddField("option", "update");
+      string url = dataPath + "/ranking.php";
+      using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
+         yield return wr.SendWebRequest();
+         if (wr.result != UnityWebRequest.Result.Success) {
+            Debug.Log(wr.error);
+            wr.Dispose();
+            GlobalManager.events.success5();
+         } else {
+            string[] datos = wr.downloadHandler.text.Split(new char[] { '&', '&' }, StringSplitOptions.RemoveEmptyEntries);
+            wr.Dispose();
+            if (datos.Length == 3) {
+               if (datos[0] == "1") {
+                  int rankId = int.Parse(datos[1]);
+                  imLevel.sprite = Level[rankId - 1];
+                  txPoints.text = datos[2];
+                  if (rankId > PlayerPrefs.GetInt("idLevel", 10)) {
+                     txUnlocked.localScale = Vector3.one;
+                  } else {
+                     txUnlocked.localScale = Vector3.zero;
+                  }
+               }
+            }
+            wr.Dispose();
+            GlobalManager.events.success5();
+         }
+      }
+   }
    public void GetDataGame () {
+      HideAllCanvas();
       string[] datos = GetDataTxt("Performance");
       foreach (string dato in datos) {
          string[] col = dato.Split(new char[] { '\t' });
@@ -168,44 +212,37 @@ public class EndGame : MonoBehaviour {
             completedGame = bool.Parse(col[1]);
             break;
          case "score":
-            score = int.Parse(col[1]);
+            txScore.text = col[1];
             break;
          case "timePlayed":
             var t = float.Parse(col[1]);
             var mn = Mathf.FloorToInt(t / 60);
             var sg = Mathf.FloorToInt(t % 60);
-            timeGame = string.Format("{0:00}:{1:00}", mn, sg);
+            txTime.text = string.Format("{0:00}:{1:00}", mn, sg);
             break;
          }
       }
-      GameObject.Find("BtRetry").transform.localScale = new Vector3(1, 1, 1);
+      ShowCanvas(PerformancePanel);
       GlobalManager.events.completedGame(completedGame);
    }
    public void GameOver () {
-      HideAllCanvas();
-      ShowCanvas(GameOverCanvas);
+      ShowCanvas(GameOverPanel);
       background.color = new Color(0.627f, 0.117f, 0.039f, 1);
-      GameOverCanvas.GetChild(0).GetChild(2).GetComponent<Text>().text = score.ToString();
-      GameOverCanvas.GetChild(0).GetChild(4).GetComponent<Text>().text = timeGame;
       gameOverSound.Play();
    }
    public void Congratulations () {
-      HideAllCanvas();
-      ShowCanvas(CongratulationsCanvas);
+      ShowCanvas(CongratulationsPanel);
       background.color = new Color(0.588f, 0.117f, 0.588f, 1);
-      CongratulationsCanvas.GetChild(0).GetChild(2).GetComponent<Text>().text = score.ToString();
-      CongratulationsCanvas.GetChild(0).GetChild(4).GetComponent<Text>().text = timeGame;
       congratSound.Play();
    }
    private void HideAllCanvas () {
-      ConnectionCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
-      GameOverCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
-      CongratulationsCanvas.GetChild(0).localScale = new Vector3(0, 0, 0);
+      ConnectionPanel.localScale = Vector3.zero;
+      GameOverPanel.localScale = Vector3.zero;
+      CongratulationsPanel.localScale = Vector3.zero;
+      PerformancePanel.localScale = Vector3.zero;
    }
-   private void ShowCanvas (Transform canvas) {
+   private void ShowCanvas (Transform panel) {
       float duration = 0.3f;
-      for (int i = 0; i < canvas.childCount; i++) {
-         canvas.GetChild(i).DOScale(new Vector3(1, 1, 1), duration);
-      }
+      panel.DOScale(Vector3.one, duration);
    }
 }
