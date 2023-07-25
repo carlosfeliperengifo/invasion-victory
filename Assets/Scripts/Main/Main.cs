@@ -37,7 +37,7 @@ public class Main : MonoBehaviour {
       ShowCanvas("Recover");
    }
    public void Consent () {
-      TextAsset consent = Resources.Load<TextAsset>("InformedConsent");
+      TextAsset consent = Resources.Load<TextAsset>("InformedConsentEs");
       ConsentCanvas.transform.GetChild(0).GetChild(1).GetComponentInChildren<Text>().text = consent.text;
       ShowCanvas("Consent");
    }

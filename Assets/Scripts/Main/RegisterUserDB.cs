@@ -39,23 +39,23 @@ public class RegisterUserDB : MonoBehaviour {
                         StartCoroutine(RegisterDB());
                         return;
                      } else {
-                        Message("Accept informed consent");
+                        Message("Acepta el consentimiento informado");
                      }
                   } else {
-                     Message("Invalid answer");
+                     Message("Respuesta inválida");
                   }
                } else {
-                  Message("Select a recovery question");
+                  Message("Selecciona una pregunta de seguridad");
                }
             } else {
-               Message("Select Yes or No");
+               Message("Selecciona Si o No");
             }
          } else {
-            Message("Invalid Password");
+            Message("Contraseña inválida");
             inPass.text = "";
          }
       } else {
-         Message("Invalid Nick");
+         Message("Apodo inválido");
       }
       GlobalManager.events.failed2();
    }
@@ -68,7 +68,7 @@ public class RegisterUserDB : MonoBehaviour {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            Message("Connection error, try again");
+            Message("Error de conexión, vuelve a intentar");
          } else {
             string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
             if (datos.Length > 0) {
@@ -94,22 +94,21 @@ public class RegisterUserDB : MonoBehaviour {
       form.AddField("answer", inAnswer.text.ToLower());
       string url = "https://semilleroarvrunicauca.com/invasion-victory/register.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
-         Message("Loading . . .");
+         Message("Cargando . . .");
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            Message("Connection error, try again");
+            Message("Error de conexión, vuelve a intentar");
             GlobalManager.events.failed2();
          } else { // Servidor ok
             switch (wr.downloadHandler.text) {
             case "1": // Nick Existente
-               Message("Nick already exists");
+               Message("El apodo ya existe");
                inPass.text = "";
                GlobalManager.events.failed2();
                break;
             case "2": // Error de registro
-               Message("Registration error, please try again later");
-               inPass.text = "";
+               Message("Error de registro, intenta más tarde");
                GlobalManager.events.failed2();
                break;
             case "3": // Usuario registrado
@@ -117,7 +116,7 @@ public class RegisterUserDB : MonoBehaviour {
                GlobalManager.events.success1();
                break;
             default:
-               Message("Connection error, try again");
+               Message("Error de conexión, vuelve a intentar");
                GlobalManager.events.failed2();
                break;
             }

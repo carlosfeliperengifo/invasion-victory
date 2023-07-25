@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4167938680749096}
   - component: {fileID: 33879306241495344}
   - component: {fileID: 23596298089994452}
+  - component: {fileID: 2254046518379683513}
   - component: {fileID: -874761273195932102}
-  - component: {fileID: 9142327946346629110}
   - component: {fileID: 6629793712928393245}
   - component: {fileID: 5672652867799082488}
   - component: {fileID: -2638110425046310613}
@@ -86,6 +86,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &2254046518379683513
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314043251266546}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.068665594
+  m_Height: 0.37918717
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.0034516838, z: -0.025845367}
 --- !u!54 &-874761273195932102
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -102,20 +116,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!64 &9142327946346629110
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314043251266546}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 7684aa101ccc34e43b3a50a6a375c9b1, type: 3}
 --- !u!82 &6629793712928393245
 AudioSource:
   m_ObjectHideFlags: 0

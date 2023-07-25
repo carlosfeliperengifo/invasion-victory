@@ -193,7 +193,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter Nick ...
+  m_Text: Apodo ...
 --- !u!222 &5469661
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -560,7 +560,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -150, y: -960}
+  m_AnchoredPosition: {x: -230, y: -960}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &62696530
@@ -765,7 +765,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter nick ...
+  m_Text: Apodo ...
 --- !u!222 &86736719
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1272,7 +1272,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Update to the new version
+  m_Text: "Actualiza a la nueva versi\xF3n . . ."
 --- !u!222 &190748413
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1502,7 +1502,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: (30 characters maximum)
+  m_Text: "(30 caracteres m\xE1ximo)"
 --- !u!222 &226207673
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1750,7 +1750,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter password ...
+  m_Text: "Contrase\xF1a ..."
 --- !u!222 &256299705
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1890,8 +1890,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -660}
-  m_SizeDelta: {x: 500, y: 65}
+  m_AnchoredPosition: {x: -5, y: -660}
+  m_SizeDelta: {x: 555, y: 65}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &282379015
 MonoBehaviour:
@@ -1942,7 +1942,7 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Select an option
+    - m_Text: Selecciona ...
       m_Image: {fileID: 21300000, guid: db63ada20f071f14abffd654d4aa75ad, type: 3}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2023,7 +2023,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 50, y: -960}
-  m_SizeDelta: {x: 300, y: 60}
+  m_SizeDelta: {x: 460, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &290667271
 MonoBehaviour:
@@ -2154,7 +2154,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -210}
-  m_SizeDelta: {x: 380, y: 50}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &304685760
 MonoBehaviour:
@@ -2189,7 +2189,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Password
+  m_Text: "Contrase\xF1a"
 --- !u!222 &304685761
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2249,7 +2249,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter Nick ...
+  m_Text: Apodo ...
 --- !u!222 &317489942
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2336,7 +2336,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 34
+    m_FontSize: 33
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 3
@@ -3406,7 +3406,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Select an option
+  m_Text: Selecciona ...
 --- !u!222 &524940873
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4213,9 +4213,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 0.2
-  m_Text: 'Recover password
-
-    ________________'
+  m_Text: "Cambiar contrase\xF1a\n_________________"
 --- !u!222 &625905897
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4294,7 +4292,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Have you played AR games before?
+  m_Text: Has jugado juegos en AR antes?
 --- !u!222 &668811192
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4567,9 +4565,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 0.2
-  m_Text: 'Informed consent.
+  m_Text: 'Consentimiento informado
 
-    _______________'
+    _______________________'
 --- !u!222 &752467641
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4960,7 +4958,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -590}
+  m_AnchoredPosition: {x: 0, y: -580}
   m_SizeDelta: {x: 450, y: 60}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &807923398
@@ -5000,7 +4998,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -60, y: -60}
+  m_SizeDelta: {x: -80, y: -60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!328 &807923400
 VideoPlayer:
@@ -5010,7 +5008,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 807923398}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: b4c530a0fe4199b44be48700041d39cb, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 06fca2827fc7a9d4590fb90fbfd673ec, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -5437,9 +5435,9 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Select Yes or No
+    - m_Text: Selecciona ...
       m_Image: {fileID: 21300000, guid: db63ada20f071f14abffd654d4aa75ad, type: 3}
-    - m_Text: Yes
+    - m_Text: SI
       m_Image: {fileID: 21300000, guid: db63ada20f071f14abffd654d4aa75ad, type: 3}
     - m_Text: No
       m_Image: {fileID: 21300000, guid: db63ada20f071f14abffd654d4aa75ad, type: 3}
@@ -5555,7 +5553,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: (6 characters minimum, 15 maximum)
+  m_Text: "(6 caracteres m\xEDnimo, 15 m\xE1ximo)"
 --- !u!222 &895868455
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5684,7 +5682,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -5110749}
+  m_AnchoredPosition: {x: 0, y: -59182.516}
   m_SizeDelta: {x: 0, y: 1100}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &947009704
@@ -5757,7 +5755,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Select an option
+  m_Text: Selecciona ...
 --- !u!222 &947009707
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6475,7 +6473,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter your answer ...
+  m_Text: Ingresa tu respuesta ...
 --- !u!222 &1013149649
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6554,7 +6552,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Skip
+  m_Text: Omitir
 --- !u!222 &1015419811
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6633,7 +6631,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter password ...
+  m_Text: "Contrase\xF1a ..."
 --- !u!222 &1030997770
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7500,7 +7498,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -610}
-  m_SizeDelta: {x: 380, y: 50}
+  m_SizeDelta: {x: 425, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1085985066
 MonoBehaviour:
@@ -7524,7 +7522,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 40
+    m_FontSize: 36
     m_FontStyle: 3
     m_BestFit: 0
     m_MinSize: 2
@@ -7535,7 +7533,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Security question
+  m_Text: Pregunta de seguridad
 --- !u!222 &1085985067
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7787,7 +7785,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -150}
-  m_SizeDelta: {x: 380, y: 50}
+  m_SizeDelta: {x: 370, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1131366613
 MonoBehaviour:
@@ -7822,7 +7820,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Nick
+  m_Text: Apodo
 --- !u!222 &1131366614
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8001,7 +7999,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Nick
+  m_Text: Apodo
 --- !u!222 &1143359373
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8280,7 +8278,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -390}
-  m_SizeDelta: {x: 440, y: 100}
+  m_SizeDelta: {x: 450, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1229716517
 MonoBehaviour:
@@ -8639,7 +8637,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -189.99997}
-  m_SizeDelta: {x: 440, y: 60}
+  m_SizeDelta: {x: 450, y: 60}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1274493439
 GameObject:
@@ -9084,7 +9082,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -340120.72}
+  m_AnchoredPosition: {x: 0, y: -42684.453}
   m_SizeDelta: {x: 0, y: 1080}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1379195474
@@ -9157,7 +9155,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Informed consent
+  m_Text: Consentimiento informado
 --- !u!222 &1379195477
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10290,7 +10288,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter new password ...
+  m_Text: "Nueva contrase\xF1a ..."
 --- !u!222 &1545612804
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10568,7 +10566,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -650}
+  m_AnchoredPosition: {x: 0, y: -640}
   m_SizeDelta: {x: 440, y: 40}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1614963513
@@ -10604,7 +10602,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: (6 characters minimum, 15 maximum)
+  m_Text: "(6 caracteres m\xEDnimo, 15 m\xE1ximo)"
 --- !u!222 &1614963514
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10727,7 +10725,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 380, y: 50}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1642680440
 MonoBehaviour:
@@ -10762,7 +10760,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Nick
+  m_Text: Apodo
 --- !u!222 &1642680441
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11013,7 +11011,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -460}
-  m_SizeDelta: {x: 350, y: 60}
+  m_SizeDelta: {x: 380, y: 60}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1695547142
 MonoBehaviour:
@@ -11816,7 +11814,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter answer ...
+  m_Text: Respuesta ...
 --- !u!222 &1784446516
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11895,7 +11893,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Select Yes or No
+  m_Text: Selecciona ...
 --- !u!222 &1824420603
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12071,7 +12069,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 35
+    m_FontSize: 33
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 3
@@ -12379,7 +12377,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: (20 characters maximum)
+  m_Text: "(20 caracteres m\xE1ximo)"
 --- !u!222 &1921291432
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12791,7 +12789,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New password
+  m_Text: "Nueva contrase\xF1a"
 --- !u!222 &1975601774
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13021,7 +13019,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -310}
-  m_SizeDelta: {x: 380, y: 50}
+  m_SizeDelta: {x: 370, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2038529053
 MonoBehaviour:
@@ -13056,7 +13054,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Password
+  m_Text: "Contrase\xF1a"
 --- !u!222 &2038529054
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13337,8 +13335,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -300}
-  m_SizeDelta: {x: 500, y: 65}
+  m_AnchoredPosition: {x: -5, y: -300}
+  m_SizeDelta: {x: 560, y: 65}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2123750831
 MonoBehaviour:
@@ -13389,7 +13387,7 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Select an option
+    - m_Text: Selecciona ...
       m_Image: {fileID: 21300000, guid: db63ada20f071f14abffd654d4aa75ad, type: 3}
   m_OnValueChanged:
     m_PersistentCalls:

@@ -38,13 +38,13 @@ public class SliderValues : MonoBehaviour {
    }
    public void DifficultyChange () {
       if (Difficulty.GetComponentInChildren<Slider>().value == 1) {
-         Difficulty.GetComponent<Text>().text = "Random difficulty";
+         Difficulty.GetComponent<Text>().text = "Dificultad aleatoria";
          SpaceshipsHorde.GetComponentInChildren<Slider>().interactable = false;
          TimeHorde.GetComponentInChildren<Slider>().interactable = false;
          SpeedSpaceships.GetComponentInChildren<Slider>().interactable = false;
          RandomValues();
       } else {
-         Difficulty.GetComponent<Text>().text = "Manual difficulty";
+         Difficulty.GetComponent<Text>().text = "Dificultad manual";
          SpaceshipsHorde.GetComponentInChildren<Slider>().interactable = true;
          TimeHorde.GetComponentInChildren<Slider>().interactable = true;
          SpeedSpaceships.GetComponentInChildren<Slider>().interactable = true;
@@ -60,9 +60,9 @@ public class SliderValues : MonoBehaviour {
          case "difficulty":
             Difficulty.GetComponentInChildren<Slider>().value = int.Parse(col[1]);
             if (Difficulty.GetComponentInChildren<Slider>().value == 1) {
-               Difficulty.GetComponent<Text>().text = "Random difficulty";
+               Difficulty.GetComponent<Text>().text = "Dificultad aleatoria";
             } else {
-               Difficulty.GetComponent<Text>().text = "Manual difficulty";
+               Difficulty.GetComponent<Text>().text = "Dificultad manual";
             }
             break;
          default:

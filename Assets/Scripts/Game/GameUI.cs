@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.Networking;
+using System.Collections;
 
 public class GameUI : MonoBehaviour {
    [SerializeField] private Transform GameCanvas;
@@ -39,6 +41,7 @@ public class GameUI : MonoBehaviour {
       GameCanvas.GetChild(1).localScale = new Vector3(0, 0, 0);
       PauseCanvas.SetActive(false);
       InvokeRepeating("Countdown", 0f, 1f);
+      StartCoroutine(GetTorneo(false));
    }
    public void Playing () {
       if (Time.timeScale == 0) {
@@ -62,13 +65,34 @@ public class GameUI : MonoBehaviour {
       Invoke("PauseGame", 0.1f);
    }
    public void SavePerformanceTxt () {
-      gameControl.SavePerformanceTxt();
+      StartCoroutine(GetTorneo(true));
    }
    private void PauseGame () {
       Time.timeScale = 0;
       AudioSource[] audios = FindObjectsOfType<AudioSource>();
       foreach (AudioSource a in audios) {
          a.Pause();
+      }
+   }
+
+   private IEnumerator GetTorneo (bool eval) {
+      WWWForm form = new WWWForm();
+      string url = "https://semilleroarvrunicauca.com/invasion-victory/torneo.php";
+      using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
+         yield return wr.SendWebRequest();
+         if (wr.result != UnityWebRequest.Result.Success) {
+            Debug.Log(wr.error);
+         } else {
+            if (wr.downloadHandler.text.Length <= 4) {
+               if (wr.downloadHandler.text == "T:1") {
+                  if(eval) {
+                     gameControl.SavePerformanceTxt();
+                  }
+               } else { 
+                  GlobalManager.events.bt_home();
+               }
+            }
+         }
       }
    }
 }

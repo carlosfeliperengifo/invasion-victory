@@ -30,10 +30,10 @@ public class LoginUserDB : MonoBehaviour {
             StartCoroutine(LoginDB());
             return;
          } else {
-            Message("Enter your Password");
+            Message("ingresa tu contraseña");
          }
       } else {
-         Message("Enter your Nick");
+         Message("Ingresa tu apodo");
       }
       GlobalManager.events.failed1();
    }
@@ -44,21 +44,21 @@ public class LoginUserDB : MonoBehaviour {
       form.AddField("password", inPass.text);
       string url = "https://semilleroarvrunicauca.com/invasion-victory/login.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
-         Message("Loading . . .");
+         Message("Cargando . . .");
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            Message("Connection error, try again");
+            Message("Error de conexión, vuelve a intentar");
             GlobalManager.events.failed1();
          } else { // Servidor ok
             switch (wr.downloadHandler.text) {
             case "2": // Contraseña incorrecta
-               Message("Incorrect Password");
+               Message("Contraseña incorrecta");
                inPass.text = "";
                GlobalManager.events.failed1();
                break;
             case "3": // Nick no encontrado
-               Message("Nick not found");
+               Message("Apodo no encontrado");
                inPass.text = "";
                GlobalManager.events.failed1();
                break;
@@ -77,7 +77,7 @@ public class LoginUserDB : MonoBehaviour {
                   CleanAllDatas();
                   GlobalManager.events.success2();
                } else {
-                  Message("Connection error, try again");
+                  Message("Error de conexión, vuelve a intentar");
                   GlobalManager.events.failed1();
                }
                break;

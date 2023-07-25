@@ -35,7 +35,7 @@ public class RecoverDB : MonoBehaviour {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            Message("Connection error, try again");
+            Message("Error de conexión, vuelve a intentar");
          } else {
             string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
             if (datos.Length > 0) {
@@ -56,17 +56,17 @@ public class RecoverDB : MonoBehaviour {
                   StartCoroutine(UpdatePassDB());
                   return;
                } else {
-                  Message("Invalid Password");
+                  Message("Contraseña inválida");
                   inPass.text = "";
                }
             } else {
-               Message("Invalid answer");
+               Message("Respuesta inválida");
             }
          } else {
-            Message("Select a recovery question");
+            Message("Selecciona una pregunta de seguridad");
          }
       } else {
-         Message("Invalid Nick");
+         Message("Apodo inválido");
       }
       GlobalManager.events.failed3();
    }
@@ -78,11 +78,11 @@ public class RecoverDB : MonoBehaviour {
       form.AddField("answer", inAnswer.text.ToLower());
       string url = "https://semilleroarvrunicauca.com/invasion-victory/editPass.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, form)) {
-         Message("Loading . . .");
+         Message("Cargando . . .");
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            Message("Connection error");
+            Message("Error de conexión");
             GlobalManager.events.failed3();
          } else { // Servidor OK
             switch (wr.downloadHandler.text) {
@@ -92,20 +92,20 @@ public class RecoverDB : MonoBehaviour {
                GlobalManager.events.success1();
                break;
             case "3":
-               Message("Incorrect answer");
+               Message("Respuesta incorrecta");
                GlobalManager.events.failed3();
                break;
             case "4":
-               Message("Incorrect question");
+               Message("Pregunta incorrecta");
                GlobalManager.events.failed3();
                break;
             case "5":
-               Message("Nick not found");
+               Message("Apodo no enontrado");
                GlobalManager.events.failed3();
                break;
             default:
                Debug.Log(wr.downloadHandler.text);
-               Message("Connection error");
+               Message("Error de conexión, vuelve a intentar");
                GlobalManager.events.failed3();
                break;
             }

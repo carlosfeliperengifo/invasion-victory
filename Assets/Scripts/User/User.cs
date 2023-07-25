@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using DG.Tweening;
+using UnityEditor;
 
 public class User : MonoBehaviour {
    [SerializeField] private Transform RankingCanvas;
@@ -66,7 +67,7 @@ public class User : MonoBehaviour {
    }
    public void Credits () {
       HideAllCanvas();
-      TextAsset credits = Resources.Load<TextAsset>("Credits");
+      TextAsset credits = Resources.Load<TextAsset>("CreditsEs");
       CreditsCanvas.transform.GetChild(0).GetChild(1).GetComponentInChildren<Text>().text = credits.text;
       ShowCanvas(CreditsCanvas);
    }
@@ -75,7 +76,7 @@ public class User : MonoBehaviour {
       ShowCanvas(ManualCanvas);
    }
    public void Movement () {
-      Message("Loading . . .");
+      Message("Cargando . . .");
       MoveCanvas.SetActive(true);
       MoveCanvas.GetComponentInChildren<VideoPlayer>().Play();
       HideAllCanvas();
@@ -120,7 +121,7 @@ public class User : MonoBehaviour {
          yield return wr.SendWebRequest();
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
-            Message("Connection error, try again");
+            Message("Error de conexión, vuelve a intentar");
          } else {
             string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
             if (datos.Length > 0) {
@@ -138,14 +139,14 @@ public class User : MonoBehaviour {
                topFile.Close();
                LoadTop10();
             } else {
-               Message("Connection error, try again");
+               Message("Error de conexión, vuelve a intentar");
             }
          }
          wr.Dispose();
       }
    }
    private void LoadTop10 () {
-      Message("Loading . . .");
+      Message("Cargando . . .");
       GameObject[] topAnt = GameObject.FindGameObjectsWithTag("Top10");
       foreach (GameObject obj in topAnt) {
          Destroy(obj);

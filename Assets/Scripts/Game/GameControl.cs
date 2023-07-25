@@ -80,9 +80,9 @@ public class GameControl : MonoBehaviour {
          switch (col[0]) {
          case "difficulty":
             if (col[1] == "1") {
-               txConfig.text = "Random difficulty\n\r";
+               txConfig.text = "Dificultad aleatoria\n\r";
             } else {
-               txConfig.text = "Manual difficulty\n\r";
+               txConfig.text = "Dificultad manual\n\r";
             }
             break;
          default:
@@ -98,15 +98,15 @@ public class GameControl : MonoBehaviour {
          switch (col[0]) {
          case "spaceshipsHorde":
             spaceshipsHorde = int.Parse(col[1]);
-            txConfig.text += col[1] + " spaceships per horde\n\r";
+            txConfig.text += col[1] + " enemigos por horda\n\r";
             break;
          case "timeHorde":
             timeHordes = int.Parse(col[1]);
-            txConfig.text += col[1] + " sec between hordes\n\r";
+            txConfig.text += col[1] + " segundos entre hordas\n\r";
             break;
          case "speedSpaceships":
             speedSpaceships = float.Parse(col[1]);
-            txConfig.text += col[1] + " m/s speed of spaceships";
+            txConfig.text += col[1] + " m/s velocidad del enemigo";
             break;
          }
       }
