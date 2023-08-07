@@ -8,6 +8,7 @@ using UnityEngine.Video;
 using DG.Tweening;
 
 public class User : MonoBehaviour {
+   // Transform variables of the different screens
    [SerializeField] private Transform RankingPanel;
    [SerializeField] private Transform ConfigPanel;
    [SerializeField] private Transform CreditsPanel;
@@ -15,21 +16,22 @@ public class User : MonoBehaviour {
    [SerializeField] private GameObject MoveCanvas;
    [SerializeField] private Armament armamentScript;
    private bool inMovement = false;
-
+   // Variables for displaying users in the Ranking
    [SerializeField] private Sprite[] Medals;
    [SerializeField] private Transform Container;
    [SerializeField] private TopRow PanelTopRow;
-
+   // Variables for displaying the image of the user's current level.
    [SerializeField] private Sprite[] Level;
    [SerializeField] private Image[] ContainersLevel;
-
+   // Survey button
    [SerializeField] private Transform btSurvey;
-
+   // Variables for displaying the manual's images
    [SerializeField] private Sprite[] ManualImages;
    [SerializeField] private Image ContainerManual;
    [SerializeField] private Transform[] ManualBts;
    private int indexManual;
 
+   // Structure for displaying a user in the Ranking.
    private struct TopUser {
       public string nick;
       public int score;
@@ -51,52 +53,60 @@ public class User : MonoBehaviour {
          GlobalManager.events.bt_skip2();
       }
    }
+   // Displays the Ranking screen
    public void Ranking () {
       Message("Cargando . . .");
       LoadUserData();
-      HideAllCanvas();
-      ShowCanvas(RankingPanel);
+      HideAllPanels();
+      ShowPanel(RankingPanel);
       StartCoroutine(GetLevel());
    }
+   // Displays the Parameters screen
    public void Parameters () {
       armamentScript.LoadConfiguration(nick, Level[idLevel - 1], points);
-      HideAllCanvas();
-      ShowCanvas(ConfigPanel);
+      HideAllPanels();
+      ShowPanel(ConfigPanel);
    }
+   // Save user parameters to a txt file
    public void SaveParameters () {
       armamentScript.SaveParameters();
       StartCoroutine(UpdateWeapon());
    }
+   // Displays the Credits screen
    public void Credits () {
-      HideAllCanvas();
+      HideAllPanels();
       TextAsset credits = Resources.Load<TextAsset>("CreditsEs");
       CreditsPanel.GetChild(1).GetComponentInChildren<Text>().text = credits.text;
-      ShowCanvas(CreditsPanel);
+      ShowPanel(CreditsPanel);
    }
+   // Displays the Manual screen
    public void Manual () {
-      HideAllCanvas();
-      ShowCanvas(ManualPanel);
+      HideAllPanels();
+      ShowPanel(ManualPanel);
       indexManual = 0;
       ChangeManualImage(indexManual);
    }
+   // Displays the Movement video
    public void Movement () {
       Message("Cargando . . .");
       MoveCanvas.SetActive(true);
       MoveCanvas.GetComponentInChildren<VideoPlayer>().Play();
-      HideAllCanvas();
+      HideAllPanels();
       inMovement = true;
    }
-
-   private void HideAllCanvas () {
+   // Hide all panels
+   private void HideAllPanels () {
       RankingPanel.localScale = Vector3.zero;
       ConfigPanel.localScale = Vector3.zero;
       CreditsPanel.localScale = Vector3.zero;
       ManualPanel.localScale = Vector3.zero;
    }
-   private void ShowCanvas (Transform panel) {
+   // Dynamic display of the panel
+   private void ShowPanel (Transform panel) {
       float duration = 0.3f;
       panel.DOScale(Vector3.one, duration);
    }
+   // Retrieve the user data and display their nickname
    private void LoadUserData () {
       TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/User.txt");
       string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
@@ -114,6 +124,7 @@ public class User : MonoBehaviour {
          }
       }
    }
+   // Displays the image of the user's level.
    private void ShowLevelImage () {
       if (idLevel > 1) {
          ContainersLevel[0].sprite = Level[idLevel - 2];
@@ -127,9 +138,11 @@ public class User : MonoBehaviour {
          ContainersLevel[2].color = new Color(1, 1, 1, 0);
       }
    }
+   // Display a message mss on the screen.
    private void Message (string mss) {
       GameObject.Find("txMss").GetComponent<Text>().text = mss;
    }
+   // Retrieve user parameters from the database
    private IEnumerator GetLevel () {
       WWWForm form = new WWWForm();
       form.AddField("usid", idUser);
@@ -161,6 +174,7 @@ public class User : MonoBehaviour {
          wr.Dispose();
       }
    }
+   // Retrieve the top players based on the user's level
    private IEnumerator GetTopListDB () {
       WWWForm form = new WWWForm();
       form.AddField("raid", idLevel);
@@ -188,6 +202,7 @@ public class User : MonoBehaviour {
          wr.Dispose();
       }
    }
+   // Display the top 10 players on the Ranking screen
    private void LoadTop10 () {
       Message("Cargando . . .");
       GameObject[] topAnt = GameObject.FindGameObjectsWithTag("Top10");
@@ -234,6 +249,7 @@ public class User : MonoBehaviour {
       Message("");
       ShowBtSurvey();
    }
+   // Update player's weapon in the database
    public IEnumerator UpdateWeapon () {
       string ids = PlayerPrefs.GetInt("idWeapon", 0).ToString();
       ids += "&&";
@@ -258,6 +274,7 @@ public class User : MonoBehaviour {
          wr.Dispose();
       }
    }
+   // Display the survey button.
    private void ShowBtSurvey () {
       if (points == "0" && PlayerPrefs.GetInt("isLogin", 0) == 1) {
          PlayerPrefs.SetInt("isLogin", 0);
@@ -278,6 +295,7 @@ public class User : MonoBehaviour {
          }
       }
    }
+   // Toggle the visibility of the survey window
    public void OpenCloseSurveyPlane (bool op) {
       if (op) {
          btSurvey.GetChild(0).localScale = Vector3.one;
@@ -285,11 +303,12 @@ public class User : MonoBehaviour {
          btSurvey.GetChild(0).localScale = Vector3.zero;
       }
    }
+   // Redirects the user to the form
    public void GoToSurvey () {
       string str = PlayerPrefs.GetString("survey", "");
       Application.OpenURL(str);
    }
-
+   // Change the manual's image.
    public void ChangeManualImage (int id) {
       indexManual += id;
       if (indexManual >= ManualImages.Length - 1) {

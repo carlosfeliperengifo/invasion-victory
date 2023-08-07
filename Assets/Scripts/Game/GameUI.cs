@@ -7,6 +7,7 @@ using System;
 using System.IO;
 
 public class GameUI : MonoBehaviour {
+   // Transform variables of the different screens
    [SerializeField] private Transform GameCanvas;
    [SerializeField] private GameObject PauseCanvas;
    [SerializeField] private Transform timer;
@@ -16,7 +17,7 @@ public class GameUI : MonoBehaviour {
    private int currentShips = 3;
    private int temp = 4;
    private readonly string dataPath = "https://semilleroarvrunicauca.com/invasion-victory/IVAR_2";
-
+   // Countdown to start the game
    public void Countdown () {
       temp--;
       if (temp > 0) {
@@ -29,7 +30,7 @@ public class GameUI : MonoBehaviour {
          GlobalManager.events.time3s();
       }
    }
-
+   // Load game parameters and display the game screen
    public void Game () {
       if (Time.timeScale == 0) {
          Time.timeScale = 1;
@@ -42,6 +43,7 @@ public class GameUI : MonoBehaviour {
          StartCoroutine(GetSpaceships());
       }
    }
+   // Display player controls
    public void Playing () {
       if (Time.timeScale == 0) {
          Time.timeScale = 1;
@@ -57,6 +59,7 @@ public class GameUI : MonoBehaviour {
       PauseCanvas.SetActive(false);
       gameControl.StartGame();
    }
+   // Enable pause screen with its menu
    public void Pause () {
       infConfig.SetActive(true);
       GameCanvas.GetChild(1).localScale = new Vector3(0, 0, 0);
@@ -67,10 +70,12 @@ public class GameUI : MonoBehaviour {
          a.Pause();
       }
    }
+   // Save Performance parameters and change of scene
    public void SavePerformanceTxt () {
       gameControl.SavePerformanceTxt();
       GlobalManager.events.performanceSaved();
    }
+   // Load user id and assigned algorithm
    private int[] LoadUserTxt() {
       int[] data = new int[2];
       TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/User.txt");
@@ -86,6 +91,7 @@ public class GameUI : MonoBehaviour {
       }
       return data;
    }
+   // Return the last used spaceshipsHorde and the increase or decrease of spaceships
    private IEnumerator GetSpaceships () {
       int[] dataUser = LoadUserTxt();
       WWWForm form = new WWWForm();
@@ -96,7 +102,7 @@ public class GameUI : MonoBehaviour {
          if (wr.result != UnityWebRequest.Result.Success) {
             Debug.Log(wr.error);
             GlobalManager.events.bt_home();
-         } else {
+         } else { // server ok
             Debug.Log(wr.downloadHandler.text);
             string[] datos = wr.downloadHandler.text.Split(new char[] { '&', '&' }, StringSplitOptions.RemoveEmptyEntries);
             wr.Dispose();
@@ -112,12 +118,13 @@ public class GameUI : MonoBehaviour {
          wr.Dispose();
       }
    }
+   // Load the values from the table of the given algorithm
    private void LoadADD (int add, int n) {
       int index = 1;
       int newShips = 3, time = 20;
       float speed = 0.6f;
       Debug.Log("ADD: " + add.ToString());
-
+      // load algorithm add
       TextAsset tableADD;
       switch (add) {
       case 1: // Random Forest
@@ -133,7 +140,7 @@ public class GameUI : MonoBehaviour {
          GlobalManager.events.bt_home();
          return;
       }
-
+      // Finding the current value of spaceships
       string[] datos = tableADD.text.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
       string[] dat;
       for (int i=1; i<datos.Length; i++) {
@@ -143,7 +150,7 @@ public class GameUI : MonoBehaviour {
             break;
          }
       }
-
+      // Update index to next value in table
       if (index + n <= 0) {
          index = 1;
       } else if (index + n >= datos.Length) {
@@ -151,20 +158,20 @@ public class GameUI : MonoBehaviour {
       } else {
          index += n;
       }
-
+      // Load data from algorithm table
       dat = datos[index].Split(new char[] { '\t' });
       time = int.Parse(dat[1]);
       speed = float.Parse(dat[2]) / 10f;
       newShips = int.Parse(dat[3]);
-
+      // Loading and saving Match data of the algorithm
       gameControl.TimeHorde = time;
       gameControl.SpeedSpaceships = speed;
       gameControl.SpaceshipsHorde = newShips;
       gameControl.LoadGameParameters();
       SaveMatchTxt(newShips, time, speed);
-      InvokeRepeating("Countdown", 0f, 1f);
+      InvokeRepeating(nameof(Countdown), 0f, 1f);
    }
-
+   // Save Match parameters in a txt file
    private void SaveMatchTxt (int ships, int tm, float speed) {
       TextWriter datos = new StreamWriter(Application.persistentDataPath + "/Match.txt", false);
       datos.WriteLine("spaceshipsHorde" + "\t" + ships.ToString("F0"));

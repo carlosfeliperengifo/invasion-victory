@@ -2,11 +2,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GlobalManager : MonoBehaviour {
+   // Controller scripts for each scene
    [SerializeField] private Main mainScript;
    [SerializeField] private User userScript;
    [SerializeField] private GameUI gameScript;
    [SerializeField] private EndGame endGameScript;
-
+   // States of finite state machines
    private enum State {
       Login, Register, Recover, Consent, History,
       LoginDB, RegisterDB, UpdatePassDB,
@@ -29,7 +30,7 @@ public class GlobalManager : MonoBehaviour {
          events = this;
       }
    }
-
+   // Load initial methods of each finite state machine
    private void Start () {
       if (Time.timeScale == 0) {
          Time.timeScale = 1;

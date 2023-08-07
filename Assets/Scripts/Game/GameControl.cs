@@ -12,12 +12,12 @@ public class GameControl : MonoBehaviour {
    [SerializeField] private Text txTime;
    [SerializeField] private Text txPhrase;
 
-   /******Match*****/
+   /******Match variables*****/
    private int spaceshipsHorde;
    private int timeHordes;
    private float speedSpaceships;
 
-   /*****Performance*****/
+   /*****Performance variables*****/
    private bool completedGame;
    private float score;
    private int spaceshipsDest;
@@ -26,10 +26,11 @@ public class GameControl : MonoBehaviour {
 
    private bool enableGame = false;
 
+   // Variables for managing hordes
    private const int hordes = 5;
    private int hordesGenerated = 0;
    private bool completedHordes = false;
-
+   // Range of the spawning radius for spaceships
    private const float minSpawnDist = 10;
    private const float maxSpawnDist = 12;
 
@@ -37,12 +38,12 @@ public class GameControl : MonoBehaviour {
    private const float updateTime = 1;
    private float delayTime = 0;
 
+   // Getters and setters
    public int SpaceshipsHorde { set { spaceshipsHorde = value; } }
    public int TimeHorde { set { timeHordes = value; } }
    public float SpeedSpaceships { set { speedSpaceships = value; } }
-
    public float MaxSpawnDist { get { return maxSpawnDist; } }
-
+   // load initial game parameters
    public void LoadGameParameters () {
       ShowPhrase();
       player.LoadWeapon();
@@ -53,6 +54,7 @@ public class GameControl : MonoBehaviour {
    }
    void Update () {
       if (enableGame) {
+         // Show timer
          timePlayed += Time.deltaTime;
          if (Time.time >= delayTime) {
             delayTime = Time.time + updateTime;
@@ -60,7 +62,7 @@ public class GameControl : MonoBehaviour {
             var sg = Mathf.FloorToInt((maxTimeGame - timePlayed) % 60);
             txTime.text = string.Format("{0:00}:{1:00}", mn, sg);
          }
-
+         // Conditionals for the end of the game
          if (player.LifePoints == 0) {
             CancelInvoke(nameof(GenerateHorde));
             enableGame = false;
@@ -78,17 +80,19 @@ public class GameControl : MonoBehaviour {
          }
       }
    }
+   // Display a motivational quote at the beginning of the game
    private void ShowPhrase () {
       TextAsset phrase = Resources.Load<TextAsset>("MotivationalQuotes");
       string[] datos = phrase.text.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
       int index = Random.Range(0, datos.Length);
       txPhrase.text = datos[index];
    }
+   
    public void StartGame () {
       GetComponent<AudioSource>().Play();
       enableGame = true;
    }
-
+   // Instantiate a number of spaceships
    private void GenerateHorde () {
       for (int i = 0; i < spaceshipsHorde; i++) {
          int pE = Random.Range(0, spaceships.Length);
@@ -101,6 +105,7 @@ public class GameControl : MonoBehaviour {
       }
       txHordes.text = hordesGenerated.ToString() + "/" + hordes.ToString();
    }
+   // Return a vector with a random position relative to the player's location
    private Vector3 GeneratePosition () {
       float angle = Random.Range(0, 72) * 5;
       float radius = Random.Range(minSpawnDist, maxSpawnDist);
@@ -112,7 +117,7 @@ public class GameControl : MonoBehaviour {
 
       return randomPos;
    }
-
+   // Store performance data during the game
    private void GetGamePerformance () {
       string dest = GameObject.Find("Destroyed").GetComponentInChildren<Text>().text;
       spaceshipsDest = int.Parse(dest);
@@ -137,6 +142,7 @@ public class GameControl : MonoBehaviour {
 
       score = SS + TS + (cg * 1000) + lifeBar * 10;
    }
+   // Save Performance parameters in a txt file
    public void SavePerformanceTxt () {
       GetGamePerformance();
       TextWriter datos = new StreamWriter(Application.persistentDataPath + "/Performance.txt", false);
@@ -156,5 +162,4 @@ public class GameControl : MonoBehaviour {
       datos.WriteLine("timePlayed" + "\t" + val);
       datos.Close();
    }
-
 }

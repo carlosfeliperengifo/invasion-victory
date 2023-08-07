@@ -36,16 +36,18 @@ public class Armament : MonoBehaviour {
       new WaitForSeconds(0.2f);
       ChangeTexture(0);
    }
+   // Save the weapon parameters
    public void SaveParameters () {
       CancelRotateGun();
       PlayerPrefs.SetInt("idWeapon", idWeapon);
       PlayerPrefs.SetInt("idMat", idMat);
    }
-
+   // Displays the weapon selected by the user
    private void ChangeWeapon (int wp) {
       CancelRotateGun();
       if (wp < 0) { wp = 0; }
       locked.localScale = Vector3.zero;
+      //
       if (wp != idWeapon) {
          if (pointer.childCount > 0) {
             Destroy(pointer.GetChild(0).gameObject);
@@ -61,6 +63,7 @@ public class Armament : MonoBehaviour {
          yRot = startRot.y;
          zRot = startRot.z;
       }
+      // Check if the selected weapon is unlocked
       if (idWeapon >= idLevel) {
          locked.DOScale(Vector3.one, 0.3f);
          btAccept.interactable = false;
@@ -70,20 +73,23 @@ public class Armament : MonoBehaviour {
          InvokeRepeating(nameof(RotateGun), 0, 0.05f);
       }
    }
+   // Change the texture of the current weapon
    private void ChangeTexture (int st) {
       currentWeapon.GetComponent<Weapon>().ChangeMaterial(idMat + st);
       idMat = currentWeapon.GetComponent<Weapon>().IdMat;
    }
+   // Toggle the visibility of the locked weapon screen
    private void HighlightFrame (int f) {
       foreach (Image fm in frames) {
          fm.color = new Color(1, 1, 1, 0.6f);
       }
       frames[f].color = new Color(0, 0.8f, 0.2f, 0.6f);
    }
+   // Stop weapon rotation
    public void CancelRotateGun () {
       CancelInvoke(nameof(RotateGun));
    }
-
+   // Rotate weapon
    private void RotateGun () {
       if (Input.touchCount > 0) {
          Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
@@ -111,6 +117,7 @@ public class Armament : MonoBehaviour {
       }
       currentWeapon.GetChild(0).GetChild(0).eulerAngles = new Vector3(0, yRot, zRot);
    }
+   // Adjust the size of the weapon when it is selected.
    private void ScaleWeapon (bool op) {
       float duration = 0.5f;
       if (op) {

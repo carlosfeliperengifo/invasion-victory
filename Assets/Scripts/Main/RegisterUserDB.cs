@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 using System;
 
 public class RegisterUserDB : MonoBehaviour {
+   // Text input variables for user data
    [SerializeField] private InputField inNick;
    [SerializeField] private InputField inPass;
    [SerializeField] private Dropdown inARQuestion;
@@ -15,7 +16,7 @@ public class RegisterUserDB : MonoBehaviour {
    [SerializeField] private Text message;
 
    private readonly string dataPath = "https://semilleroarvrunicauca.com/invasion-victory/IVAR_2";
-
+   // Clear all text inputs
    public void CleanAllDatas () {
       Message("");
       inNick.text = "";
@@ -25,6 +26,7 @@ public class RegisterUserDB : MonoBehaviour {
       inAnswer.text = "";
       tgConsent.isOn = false;
    }
+   // Check the length of the text fields
    public void RegisterUser () {
       if (inNick.text.Length >= 3) {
          if (inPass.text.Length >= 6) {
@@ -55,6 +57,7 @@ public class RegisterUserDB : MonoBehaviour {
       }
       GlobalManager.events.failed2();
    }
+   // Retrieve question options of the database
    public IEnumerator GetQuestions () {
       if (inSecQuestions.options.Count <=1 ) {
          Message("");
@@ -81,6 +84,7 @@ public class RegisterUserDB : MonoBehaviour {
          yield return null;
       }
    }
+   // Submit the form with the new user's data to the database
    private IEnumerator RegisterDB () {
       WWWForm form = new WWWForm();
       form.AddField("nick", inNick.text);
@@ -100,18 +104,18 @@ public class RegisterUserDB : MonoBehaviour {
             Debug.Log(wr.error);
             Message("Error de conexión, vuelve a intentar");
             GlobalManager.events.failed2();
-         } else { // Servidor ok
+         } else { // Server ok
             switch (wr.downloadHandler.text) {
             case "1": // Nick Existente
                Message("El apodo ya existe");
                inPass.text = "";
                GlobalManager.events.failed2();
                break;
-            case "2": // Error de registro
+            case "2": // Register error
                Message("Error de registro, intenta más tarde");
                GlobalManager.events.failed2();
                break;
-            case "3": // Usuario registrado
+            case "3": // User registred
                CleanAllDatas();
                GlobalManager.events.success1();
                break;
@@ -124,9 +128,11 @@ public class RegisterUserDB : MonoBehaviour {
          wr.Dispose();
       }
    }
+   // Display a message mss on the screen
    private void Message (string mss) {
       message.text = mss;
    }
+   // Toggle the visibility of the password
    public void TogglePass () {
       if (inPass.contentType == InputField.ContentType.Password) {
          inPass.contentType = InputField.ContentType.Standard;

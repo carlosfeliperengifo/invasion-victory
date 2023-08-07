@@ -6,16 +6,19 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 
 public class LoginUserDB : MonoBehaviour {
+   // Text input variables for user data
    [SerializeField] private InputField inNick;
    [SerializeField] private InputField inPass;
 
    private readonly string dataPath = "https://semilleroarvrunicauca.com/invasion-victory/IVAR_2";
 
+   // Clear all text inputs
    public void CleanAllDatas () {
       Message("");
       inNick.text = "";
       inPass.text = "";
    }
+   // Check the length of the text fields
    public void LoginUser () {
       if (inNick.text.Length > 0) {
          if (inPass.text.Length > 0) {
@@ -29,7 +32,7 @@ public class LoginUserDB : MonoBehaviour {
       }
       GlobalManager.events.failed1();
    }
-
+   // Submit the form with the new user's data to the database
    IEnumerator LoginDB () {
       WWWForm form = new WWWForm();
       form.AddField("nick", inNick.text);
@@ -42,22 +45,23 @@ public class LoginUserDB : MonoBehaviour {
             Debug.Log(wr.error);
             Message("Error de conexión, vuelve a intentar");
             GlobalManager.events.failed1();
-         } else { // Servidor ok
+         } else { // Server ok
             switch (wr.downloadHandler.text) {
-            case "2": // Contraseña incorrecta
+            case "2": // Incorrect password
                Message("Contraseña incorrecta");
                inPass.text = "";
                GlobalManager.events.failed1();
                break;
-            case "3": // Nick no encontrado
+            case "3": // Nickname not found
                Message("Apodo no encontrado");
                inPass.text = "";
                GlobalManager.events.failed1();
                break;
-            default: // Evaluar respuesta
+            default: // Evaluate response
                string[] datos = wr.downloadHandler.text.Split(new char[] { '%', '%' }, StringSplitOptions.RemoveEmptyEntries);
                wr.Dispose();
                if (datos.Length == 5) {
+                  // Save user data to a txt file
                   if (datos[0] == "1") {
                      TextWriter user = new StreamWriter(Application.persistentDataPath + "/User.txt", false);
                      user.WriteLine("usid" + "\t" + datos[1]);
@@ -83,9 +87,11 @@ public class LoginUserDB : MonoBehaviour {
          }
       }
    }
+   // Display a message mss on the screen
    private void Message (string mss) {
       GameObject.Find("txtMss1").GetComponent<Text>().text = mss;
    }
+   // Toggle the visibility of the password
    public void TogglePass () {
       if (inPass.contentType == InputField.ContentType.Password) {
          inPass.contentType = InputField.ContentType.Standard;
@@ -93,7 +99,7 @@ public class LoginUserDB : MonoBehaviour {
          inPass.contentType = InputField.ContentType.Password;
       }
    }
-
+   // Retrieve the survey link from the server
    private IEnumerator CheckSurvey () {
       WWWForm form = new WWWForm();
       form.AddField("nick", inNick.text);

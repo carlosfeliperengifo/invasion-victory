@@ -21,10 +21,11 @@ public class Player : MonoBehaviour {
    private int burstShots;
    private const int maxMunition = 99;
    private int munition = maxMunition;
-
+   // Player states
    private enum State {
       Available, Recharging, ShootingBurst, Shooting
    }
+   // Transitions for the weapon
    public enum Transition {
       wait, recharge, shootBurst, autoShot
    }
@@ -33,6 +34,7 @@ public class Player : MonoBehaviour {
 
    public int LifePoints { get { return lifePoints; } }
 
+   // Recovers a life point every recoveryTime
    private IEnumerator Start () {
       yield return new WaitForSeconds(recoveryTime);
       if (lifePoints < maxLifePoints) {
@@ -41,7 +43,7 @@ public class Player : MonoBehaviour {
       }
       StartCoroutine(Start());
    }
-
+   // Instantiate the weapon selected by the user
    public void LoadWeapon () {
       int idWp = PlayerPrefs.GetInt("idWeapon", 0);
       int idMat = PlayerPrefs.GetInt("idMat", 0);
@@ -49,7 +51,7 @@ public class Player : MonoBehaviour {
       weaponScript = wp.GetComponent<Weapon>();
       weaponScript.ChangeMaterial(idMat);
    }
-
+   // Management of player states
    private void PlayerStates () {
       switch (weapon) {
       case State.Available:
@@ -68,6 +70,7 @@ public class Player : MonoBehaviour {
          break;
       }
    }
+   // Management of the events
    public void PlayerTransitions (Transition t) {
       if (weapon == State.Available) {
          switch (t) {
@@ -93,6 +96,7 @@ public class Player : MonoBehaviour {
       }
    }
    public void PlayerTransitionsRecharge () => PlayerTransitions(Transition.recharge);
+   // Generates a bullet to be fired
    private IEnumerator GenerateBullet () {
       if (munition > 0) {
          weaponScript.Shoot();
@@ -123,12 +127,13 @@ public class Player : MonoBehaviour {
          break;
       }
    }
+   // Ends the reload state
    private void OutReload () {
       munition = maxMunition;
       txMun.text = munition.ToString();
       PlayerTransitions(Transition.wait);
    }
-
+   // Player collision handling
    private void OnTriggerEnter (Collider other) {
       switch (other.tag) {
       case "Projectile":
@@ -148,6 +153,7 @@ public class Player : MonoBehaviour {
       if (lifePoints < 0) { lifePoints = 0; }
       lifeBar.fillAmount = lifePoints / (float)(maxLifePoints);
    }
+   // Changes the color of the screen when the player taking damage
    private IEnumerator Damage (float alpha, float duration, bool st) {
       damage.color = new Color(1f, 0f, 0f, alpha);
       if (st) {

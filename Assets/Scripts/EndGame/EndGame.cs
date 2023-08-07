@@ -7,23 +7,24 @@ using UnityEngine.Networking;
 using System;
 
 public class EndGame : MonoBehaviour {
+   // Transform variables across different panels
    [SerializeField] private Transform ConnectionPanel;
    [SerializeField] private Transform GameOverPanel;
    [SerializeField] private Transform CongratulationsPanel;
    [SerializeField] private Transform PerformancePanel;
-
+   // Audios for each panel
    [SerializeField] private AudioSource gameOverSound;
    [SerializeField] private AudioSource congratSound;
    [SerializeField] private RawImage background;
-
+   // Images of the game levels
    [SerializeField] private Sprite[] Level;
-
+   // Texts for performance display
    [SerializeField] private Text txScore;
    [SerializeField] private Text txTime;
    [SerializeField] private Text txPoints;
    [SerializeField] private Image imLevel;
    [SerializeField] private Transform txUnlocked;
-
+   // Forms for the connection with the database
    private WWWForm sesionForm;
    private WWWForm mathForm;
    private WWWForm performanceForm;
@@ -34,6 +35,7 @@ public class EndGame : MonoBehaviour {
    private bool isConnected = false;
 
    private readonly string dataPath = "https://semilleroarvrunicauca.com/invasion-victory/IVAR_2";
+   // Save sesionForm with user data
    private void LoadSesion () {
       sesionForm = new WWWForm();
       string[] datos = GetDataTxt("User");
@@ -45,6 +47,7 @@ public class EndGame : MonoBehaviour {
          sesionForm.AddField(col[0], col[1]);
       }
    }
+   // Save mathForm with user data
    private void LoadMatch () {
       mathForm = new WWWForm();
       string[] datos = GetDataTxt("Match");
@@ -63,6 +66,7 @@ public class EndGame : MonoBehaviour {
       serial = serial.Remove(serial.Length - 1);
       mathForm.AddField("serial", serial);
    }
+   // Save performanceForm with user data
    private void LoadPerformance () {
       performanceForm = new WWWForm();
       string[] datos = GetDataTxt("Performance");
@@ -79,15 +83,17 @@ public class EndGame : MonoBehaviour {
          }
       }
    }
+   // Retrieve data from a txt file
    private string[] GetDataTxt (string name) {
       TextReader Datostxt = new StreamReader(Application.persistentDataPath + "/" + name + ".txt");
       string[] datos = Datostxt.ReadToEnd().Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
       Datostxt.Close();
       return datos;
    }
+   // Check internet connection
    public IEnumerator Connection () {
       if (Application.internetReachability == NetworkReachability.NotReachable) {
-         HideAllCanvas();
+         HideAllPanels();
          ShowCanvas(ConnectionPanel);
          background.color = new Color(0.431f, 0.471f, 0.51f, 1f);
          isConnected = false;
@@ -100,6 +106,7 @@ public class EndGame : MonoBehaviour {
          StartCoroutine(Connection());
       }
    }
+   // Add user session data to the database
    public IEnumerator InsertSessionDB () {
       LoadSesion();
       LoadPerformance();
@@ -110,7 +117,7 @@ public class EndGame : MonoBehaviour {
             Debug.Log(wr.error);
             wr.Dispose();
             GlobalManager.events.failed4();
-         } else { // Servidor ok
+         } else { // Server ok
             Debug.Log("Se: " + wr.downloadHandler.text);
             string[] datos = wr.downloadHandler.text.Split(new char[] { ':' });
             if (datos[0] == "1" && datos.Length == 2) {
@@ -124,6 +131,7 @@ public class EndGame : MonoBehaviour {
          }
       }
    }
+   // Add user match data to the database
    public IEnumerator InsertMatchDB () {
       LoadMatch();
       string url = dataPath + "/match.php";
@@ -147,6 +155,7 @@ public class EndGame : MonoBehaviour {
          }
       }
    }
+   // Add user performance data to the database
    public IEnumerator InsertPerformanceDB () {
       string url = dataPath + "/performance.php";
       using (UnityWebRequest wr = UnityWebRequest.Post(url, performanceForm)) {
@@ -171,6 +180,7 @@ public class EndGame : MonoBehaviour {
          }
       }
    }
+   // Update player level in the database
    private IEnumerator UpdateLevel () {
       WWWForm form = new WWWForm();
       form.AddField("usid", idUser);
@@ -202,8 +212,9 @@ public class EndGame : MonoBehaviour {
          }
       }
    }
+   // Load data from the last game
    public void GetDataGame () {
-      HideAllCanvas();
+      HideAllPanels();
       string[] datos = GetDataTxt("Performance");
       foreach (string dato in datos) {
          string[] col = dato.Split(new char[] { '\t' });
@@ -225,22 +236,27 @@ public class EndGame : MonoBehaviour {
       ShowCanvas(PerformancePanel);
       GlobalManager.events.completedGame(completedGame);
    }
+
+   // Displays the GameOver screen
    public void GameOver () {
       ShowCanvas(GameOverPanel);
       background.color = new Color(0.627f, 0.117f, 0.039f, 1);
       gameOverSound.Play();
    }
+   // Displays the Congratulations screen
    public void Congratulations () {
       ShowCanvas(CongratulationsPanel);
       background.color = new Color(0.588f, 0.117f, 0.588f, 1);
       congratSound.Play();
    }
-   private void HideAllCanvas () {
+   // Hide all panels
+   private void HideAllPanels () {
       ConnectionPanel.localScale = Vector3.zero;
       GameOverPanel.localScale = Vector3.zero;
       CongratulationsPanel.localScale = Vector3.zero;
       PerformancePanel.localScale = Vector3.zero;
    }
+   // Dynamic display of the panel
    private void ShowCanvas (Transform panel) {
       float duration = 0.3f;
       panel.DOScale(Vector3.one, duration);

@@ -10,7 +10,7 @@ public class UpdateApp : MonoBehaviour {
       StartCoroutine(CheckVersion());
       yield return new WaitForSeconds(15);
    }
-
+   // Check the game version
    private IEnumerator CheckVersion() {
       WWWForm form = new WWWForm();
       string url = dataPath + "/update.php";
@@ -23,6 +23,7 @@ public class UpdateApp : MonoBehaviour {
                string version = "V" + Application.version;
                version = version.Replace(",", ".");
                Debug.Log(version);
+               // Toggle lock screen based on the version
                if (wr.downloadHandler.text == version) {
                   transform.GetChild(0).gameObject.SetActive(false);
                } else {
@@ -33,6 +34,7 @@ public class UpdateApp : MonoBehaviour {
          wr.Dispose();
       }
    }
+   // Got to the Play Store
    public void GoUpdate () {
       Application.OpenURL("https://play.google.com/store/apps/details?id=com.unicauca.InvasionVictory");
    }

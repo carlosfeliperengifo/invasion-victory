@@ -7,27 +7,29 @@ public class SpaceShip : MonoBehaviour {
    [SerializeField] private Rigidbody rigidBody;
 
    private int lifePoints = 5;
-
+   // Objects for the spaceships animations
    [SerializeField] private GameObject portal;
    [SerializeField] private GameObject projectile;
    [SerializeField] private GameObject explosion;
    [SerializeField] private GameObject soundimpact;
 
+   private GameObject player;
    private Vector3 evasionVector;
    private int stateEva = 0;
 
    public float Speed { set { speed = value; } }
 
+   // Instantiate a portal when a spaceship is instantiated
    void Start () {
+      player = GameObject.FindGameObjectWithTag("Player");
       Vector3 offsetPos = new Vector3(0, 0.9f, 0);
       GameObject newPortal = Instantiate(portal, transform.position - offsetPos, transform.rotation);
       Destroy(newPortal, 1.5f);
       StartCoroutine(ShootProjectile());
       stateEva = 0;
    }
-
+   // Update spaceships position
    void Update () {
-      GameObject player = GameObject.FindGameObjectWithTag("Player");
       GenerateEvasionVector(player);
       Vector3 vectorObjetive = (player.transform.position - transform.position - evasionVector).normalized;
       var rotacion = Quaternion.LookRotation(vectorObjetive);
@@ -38,13 +40,14 @@ public class SpaceShip : MonoBehaviour {
          rigidBody.velocity = transform.forward * 0;
       }
    }
-
+   // Fires a projectile each shootRate
    private IEnumerator ShootProjectile () {
       float shootRate = Random.Range(5f, 8f);
       yield return new WaitForSeconds(shootRate);
       Instantiate(projectile, transform.position, transform.rotation);
       StartCoroutine(ShootProjectile());
    }
+   // Collision management
    private void OnTriggerEnter (Collider other) {
       switch (other.tag) {
       case "PlayerBullet":
@@ -67,6 +70,7 @@ public class SpaceShip : MonoBehaviour {
          return;
       }
    }
+   // Generate a random dynamic evasion vector
    private void GenerateEvasionVector (GameObject player) {
       float evax, evay, evaz;
       float distance = Vector3.Distance(player.transform.position, transform.position);
@@ -90,9 +94,9 @@ public class SpaceShip : MonoBehaviour {
          evay = evasionVector.y;
          evaz = evasionVector.z;
       }
-
       evasionVector = new Vector3(evax, evay, evaz);
    }
+   // Changes its color when it takes damage
    private IEnumerator Damage (bool st) {
       if (st) {
          transform.GetComponent<MeshRenderer>().material.color = new Color(1f, 0f, 0f, 1f);
